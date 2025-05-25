@@ -1,3 +1,4 @@
+⚠️ **Aviso:** Este documento ainda está em construção. Contribuições são bem-vindas!
 # Contribuindo com o projeto **Sem nome por hora**
 
 Olá! Obrigado por querer contribuir com o **Sem nome por hora**, uma aplicação de IA com RAG voltada para melhorar o acesso à informação em instituições de ensino superior, além de outras funcionalidades para facilitar o dia a dia na universidade.
