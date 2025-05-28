@@ -1,6 +1,6 @@
 # 📚 (Sem nome por hora)
 
-> Um assistente inteligente para universidades: centralize documentos institucionais, automatize respostas e reduza a sobrecarga administrativa com IA.
+> Um assistente inteligente para universidades: centralize documentos institucionais, automatize respostas e reduza a sobrecarga administrativa.
 ---
 ## Criadores
 - Maria Clara
