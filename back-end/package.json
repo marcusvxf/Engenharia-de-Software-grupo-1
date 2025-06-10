@@ -1,0 +1,36 @@
+{
+  "name": "engenharia-de-software-grupo-1",
+  "version": "1.0.0",
+  "description": "> Um assistente inteligente para universidades: centralize documentos institucionais, automatize respostas e reduza a sobrecarga administrativa. --- ## Criadores - Maria Clara - Matheus Pessoa - Igor Rego - Marcus Vinicius ---",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest",
+    "dev": "ts-node-dev --respawn --transpile-only src/server.ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/marcusvxf/Engenharia-de-Software-grupo-1.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/marcusvxf/Engenharia-de-Software-grupo-1/issues"
+  },
+  "homepage": "https://github.com/marcusvxf/Engenharia-de-Software-grupo-1#readme",
+  "dependencies": {
+    "@prisma/client": "^6.9.0",
+    "dotenv": "^16.5.0",
+    "express": "^5.1.0",
+    "prisma": "^6.9.0"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.3",
+    "@types/jest": "^29.5.14",
+    "@types/node": "^24.0.0",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.3.4",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.8.3"
+  }
+}
