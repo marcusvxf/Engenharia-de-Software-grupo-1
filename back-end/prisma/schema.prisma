@@ -13,3 +13,18 @@ model User {
   name  String
   email String @unique
 }
+
+model Chat {
+  id int @id @default(autoincrement())
+  name String
+  created_at DateTime @default(now())
+  user_id User @relation(fields: [user_id], references: [id])
+}
+
+
+model Message {
+  id int @id @default(autoincrement())
+  chat_id Chat @relation(fields: [chat_id], references: [id])
+  order Int
+  text String
+}
