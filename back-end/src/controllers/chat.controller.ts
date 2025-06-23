@@ -1,8 +1,9 @@
 import express from 'express';
 import prisma from '../prisma';
 import { ChatService } from '../services/chat.service';
+import { IChatController } from '../interfaces/chat.interface';
 
-export class ChatController {
+export class ChatController implements IChatController {
   private readonly chatService: ChatService;
   constructor(chatService: ChatService) {
     this.chatService = chatService;

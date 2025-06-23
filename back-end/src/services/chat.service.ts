@@ -1,13 +1,20 @@
 import { PrismaClient } from '@prisma/client';
+import {
+  IChatService,
+  ICreateMessageOutput,
+} from '../interfaces/chat.interface';
 
-export class ChatService {
+export class ChatService implements IChatService {
   private readonly prisma: PrismaClient;
 
   constructor(prisma: PrismaClient) {
     this.prisma = prisma;
   }
 
-  public async createMessage(chatId: string, text: string): Promise<any> {
+  public async createMessage(
+    chatId: string,
+    text: string
+  ): Promise<ICreateMessageOutput> {
     if (!chatId || !text) {
       throw new Error('chatId and text are required');
     }
@@ -16,11 +23,14 @@ export class ChatService {
       data: {
         chat_id: chatId,
         text: text,
-        order: 1, // This should be set based on the existing messages in the chat
       },
     });
 
-    return message;
+    if (!message) {
+      throw new Error('Failed to create message');
+    }
+
+    return message as ICreateMessageOutput;
   }
 
   public async getChatHistory(chatId: string): Promise<any[]> {
