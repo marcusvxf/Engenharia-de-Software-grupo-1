@@ -14,12 +14,13 @@ export class ChatController implements IChatController {
     res: express.Response
   ): Promise<void> {
     try {
-      const { chatId, text } = req.body;
+      const { text } = req.body;
+      const { chatId } = req.params;
 
       const message = await this.chatService.createMessage(chatId, text);
       res.status(201).json(message);
     } catch (error) {
-      res.status(500).json({ error: 'Internal server error' });
+      res.status(500).json({ error: 'Internal server error', message: error });
     }
   }
 
