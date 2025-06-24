@@ -29,4 +29,5 @@ model Message {
   chat     Chat   @relation(fields: [chatId], references: [id])
   createdAt DateTime @default(now())
   text     String
+  role     String
 }

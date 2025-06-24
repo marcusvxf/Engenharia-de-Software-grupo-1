@@ -11,13 +11,6 @@ export interface IChatEntity {
   userId: number;
 }
 
-export interface IMessageEntity {
-  id: number;
-  chatId: string;
-  text: string;
-  createdAt: Date;
-}
-
 export interface IChatService {
   createMessage(chatId: string, text: string): Promise<ICreateMessageOutput>;
   getChatHistory(chatId: string): Promise<any[]>;
