@@ -1,0 +1,35 @@
+#Ambiente virtual
+venv/
+ENV/
+.venv/
+
+# Cache do python
+__pycache__/
+*.py[cod]
+*.pyo
+
+#Arquvivo de log
+*.log
+
+#Arquivo de sistema
+.DS_STORE
+thumbs.db
+
+#Configurações de IDE
+.vscode/
+.idea/
+*.sublime-workspace
+*.sublime-project
+
+#Banco de dados ou arquivos de estado
+db/
+*.sqlite3
+*.db
+
+#Dados de vetor
+vectorstore/
+
+# documentos upados
+documents/
+
+.env
