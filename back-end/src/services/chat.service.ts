@@ -1,48 +1,30 @@
-import { PrismaClient } from '@prisma/client';
-import {
-  IChatService,
-  ICreateMessageOutput,
-} from '../interfaces/chat.interface';
+// back-end/src/services/chat.service.ts
+import prisma from '../prisma';
 
-export class ChatService implements IChatService {
-  private readonly prisma: PrismaClient;
-
-  constructor(prisma: PrismaClient) {
-    this.prisma = prisma;
-  }
-
-  public async createMessage(
-    chatId: string,
-    text: string
-  ): Promise<ICreateMessageOutput> {
-    if (!chatId || !text) {
-      throw new Error('chatId and text are required');
-    }
-
-    const message = await this.prisma.message.create({
+export class ChatService {
+  /**
+   * Cria uma nova conversa no banco de dados.
+   * @param name - O nome da conversa.
+   * @param userId - O ID do usuário que está criando a conversa.
+   */
+  async create(name: string, userId: number) {
+    return await prisma.chat.create({
       data: {
-        chat_id: chatId,
-        text: text,
+        name,
+        userId,
       },
     });
-
-    if (!message) {
-      throw new Error('Failed to create message');
-    }
-
-    return message as ICreateMessageOutput;
   }
 
-  public async getChatHistory(chatId: string): Promise<any[]> {
-    if (!chatId) {
-      throw new Error('chatId is required');
-    }
-
-    const messages = await this.prisma.message.findMany({
-      where: { chat_id: chatId },
-      orderBy: { order: 'asc' },
+  /**
+   * Busca no banco de dados todas as conversas de um usuário específico.
+   * @param userId - O ID do usuário cujas conversas serão listadas.
+   */
+  async getByUserId(userId: number) {
+    return await prisma.chat.findMany({
+      where: {
+        userId: userId,
+      },
     });
-
-    return messages;
   }
 }

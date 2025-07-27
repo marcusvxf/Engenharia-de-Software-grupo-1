@@ -1,28 +1,46 @@
-import express from 'express';
-import prisma from '../prisma';
+// back-end/src/controllers/chat.controller.ts
+import { Request, Response } from 'express';
 import { ChatService } from '../services/chat.service';
-import { IChatController } from '../interfaces/chat.interface';
 
-export class ChatController implements IChatController {
-  private readonly chatService: ChatService;
-  constructor(chatService: ChatService) {
-    this.chatService = chatService;
+const chatService = new ChatService();
+
+/**
+ * Controller para lidar com a criação de uma nova conversa.
+ */
+export const createChat = async (req: Request, res: Response) => {
+  // Extrai o nome da conversa e o ID do usuário do corpo da requisição
+  const { name, userId } = req.body;
+
+  // Validação básica para garantir que os dados foram enviados
+  if (!name || !userId) {
+    return res
+      .status(400)
+      .json({ message: 'O nome da conversa e o userId são obrigatórios.' });
   }
 
-  public async createMessage(
-    req: express.Request,
-    res: express.Response
-  ): Promise<void> {
-    try {
-      const { text } = req.body;
-      const { chatId } = req.params;
+  try {
+    const chat = await chatService.create(name, userId);
+    res.status(201).json(chat);
+  } catch (error) {
+    res.status(500).json({ message: 'Erro ao criar a conversa.' });
+  }
+};
 
-      const message = await this.chatService.createMessage(chatId, text);
-      res.status(201).json(message);
-    } catch (error) {
-      res.status(500).json({ error: 'Internal server error', message: error });
-    }
+/**
+ * Controller para lidar com a listagem de conversas de um usuário.
+ */
+export const getChatsByUserId = async (req: Request, res: Response) => {
+  // Pega o ID do usuário dos parâmetros da URL (ex: /chats/user/1)
+  const userId = parseInt(req.params.userId, 10);
+
+  if (isNaN(userId)) {
+    return res.status(400).json({ message: 'O ID do usuário é inválido.' });
   }
 
-  public async getChatHistory() {}
-}
+  try {
+    const chats = await chatService.getByUserId(userId);
+    res.json(chats);
+  } catch (error) {
+    res.status(500).json({ message: 'Erro ao buscar as conversas.' });
+  }
+};
