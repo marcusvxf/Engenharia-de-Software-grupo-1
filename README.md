@@ -1,4 +1,4 @@
-# 📚 (Sem nome por hora)
+# 📚 Cinchat
 
 > Um assistente inteligente para universidades: centralize documentos institucionais, automatize respostas e reduza a sobrecarga administrativa.
 ---
