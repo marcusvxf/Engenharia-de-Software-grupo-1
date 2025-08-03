@@ -8,8 +8,10 @@ const chatService = new ChatService();
  * Controller para lidar com a criação de uma nova conversa.
  */
 export const createChat = async (req: Request, res: Response) => {
+  console.log('req.body', req.body);
   // Extrai o nome da conversa e o ID do usuário do corpo da requisição
   const { name, userId } = req.body;
+  console.log('TA chegando body', req.body);
 
   // Validação básica para garantir que os dados foram enviados
   if (!name || !userId) {
@@ -22,6 +24,7 @@ export const createChat = async (req: Request, res: Response) => {
     const chat = await chatService.create(name, userId);
     res.status(201).json(chat);
   } catch (error) {
+    console.log('error', error);
     res.status(500).json({ message: 'Erro ao criar a conversa.' });
   }
 };
