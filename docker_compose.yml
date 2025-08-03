@@ -1,0 +1,32 @@
+services:
+  nginx:
+    image:
+    container_name: nginx
+    volumes:
+      - ./nginx/html/dist:/etc/nginx/html
+      - ./nginx/log:/var/log/nginx;
+    ports:
+      - '80:80'
+      - '443:443'
+    expose:
+      - '413'
+    networks:
+      service-connection:
+        aliases:
+          - service-connection
+
+  api-node:
+    image:
+    command: npm run start
+    container_name: api-node
+    networks:
+      service-connection:
+        aliases:
+          - service-connection
+    expose:
+      - '3000'
+    environment:
+
+networks:
+  service-connection:
+    driver: bridge
