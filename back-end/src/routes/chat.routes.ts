@@ -1,4 +1,3 @@
-// back-end/src/routes/chat.routes.ts
 import express from 'express';
 import { createChat, getChatsByUserId } from '../controllers/chat.controller';
 
