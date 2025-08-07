@@ -12,6 +12,9 @@ on:
       context:
         required: false
         type: string
+      docker_image_name:
+        required: true
+        type: string
 
     secrets:
       GH_TOKEN:
@@ -49,4 +52,4 @@ jobs:
           context: ${{ inputs.context || '.' }}
           file: ${{ inputs.path || 'Dockerfile' }}
           push: true
-          tags: ${{ secrets.DOCKER_USERNAME }}/${{secrets.DOCKER_IMAGE_NAME}}:${{ inputs.version_code }}
+          tags: ${{ secrets.DOCKER_USERNAME }}/${{inputs.docker_image_name}}:${{ inputs.version_code }}
