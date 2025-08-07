@@ -3,15 +3,17 @@ const swaggerAutogen = require('swagger-autogen')({ openapi: '3.0.0' });
 const doc = {
   info: {
     title: 'Engenharia de Software - Grupo 1',
-    description: 'API para o Engenharia de Software - Grupo 1',
+    description: 'API para o projeto de Engenharia de Software - Grupo 1',
   },
   host: 'localhost:3000',
   schemes: ['http'],
 };
 
-const outputFile = './swagger-output.json';
-const endpointsFiles = ['./endpoints.js'];
+// Corrigido: O arquivo de saída será o swagger.json que já existe
+const outputFile = './swagger.json'; 
 
-swaggerAutogen(outputFile, endpointsFiles, doc).then(() => {
-  require('./index'); // Your project's root file
-});
+// Corrigido: Apontamos para o arquivo que usa todas as nossas rotas
+const endpointsFiles = ['./src/index.ts']; 
+
+// Esta linha executa a geração da documentação com base nos arquivos de rotas
+swaggerAutogen(outputFile, endpointsFiles, doc);
