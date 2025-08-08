@@ -2,10 +2,15 @@ name: Pipeline to build back end
 
 on:
   push:
+    branches:
+      - main
     paths:
       - back-end/**
 
   pull_request:
+    types: [closed]
+    branches:
+      - main
     paths:
       - back-end/**
 
