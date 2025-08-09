@@ -1,0 +1,615 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Engenharia de Software - Grupo 1",
+    "description": "API para o projeto de Engenharia de Software - Grupo 1",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3000/"
+    }
+  ],
+  "paths": {
+    "/users/": {
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Listar todos os usuários.",
+        "description": "Endpoint para obter uma lista de todos os usuários cadastrados no sistema.",
+        "responses": {
+          "200": {
+            "description": "Lista de usuários obtida com sucesso.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "number",
+                        "example": 1
+                      },
+                      "name": {
+                        "type": "string",
+                        "example": "John Doe"
+                      },
+                      "email": {
+                        "type": "string",
+                        "example": "john.doe@example.com"
+                      }
+                    }
+                  },
+                  "xml": {
+                    "name": "main"
+                  }
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "number",
+                        "example": 1
+                      },
+                      "name": {
+                        "type": "string",
+                        "example": "John Doe"
+                      },
+                      "email": {
+                        "type": "string",
+                        "example": "john.doe@example.com"
+                      }
+                    }
+                  },
+                  "xml": {
+                    "name": "main"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Criar um novo usuário.",
+        "description": "Endpoint para cadastrar um novo usuário no sistema.",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Dados do novo usuário.",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "example": "Jane Doe"
+                },
+                "email": {
+                  "type": "string",
+                  "example": "jane.doe@example.com"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Usuário criado com sucesso.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "number",
+                      "example": 2
+                    },
+                    "name": {
+                      "type": "string",
+                      "example": "Jane Doe"
+                    },
+                    "email": {
+                      "type": "string",
+                      "example": "jane.doe@example.com"
+                    }
+                  },
+                  "xml": {
+                    "name": "main"
+                  }
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "number",
+                      "example": 2
+                    },
+                    "name": {
+                      "type": "string",
+                      "example": "Jane Doe"
+                    },
+                    "email": {
+                      "type": "string",
+                      "example": "jane.doe@example.com"
+                    }
+                  },
+                  "xml": {
+                    "name": "main"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Dados inválidos."
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "example": "any"
+                  },
+                  "email": {
+                    "example": "any"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/chats/": {
+      "post": {
+        "tags": [
+          "Chats"
+        ],
+        "summary": "Criar uma nova conversa.",
+        "description": "Endpoint para criar uma nova conversa associada a um usuário.",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Dados para criar a nova conversa.",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "example": "Dúvidas sobre Aproveitamento de Créditos"
+                },
+                "userId": {
+                  "type": "number",
+                  "example": 1
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Conversa criada com sucesso.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "number",
+                      "example": 1
+                    },
+                    "name": {
+                      "type": "string",
+                      "example": "Dúvidas sobre Aproveitamento de Créditos"
+                    },
+                    "createdAt": {
+                      "type": "string",
+                      "example": "2025-08-08T02:30:00.000Z"
+                    },
+                    "userId": {
+                      "type": "number",
+                      "example": 1
+                    }
+                  },
+                  "xml": {
+                    "name": "main"
+                  }
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "number",
+                      "example": 1
+                    },
+                    "name": {
+                      "type": "string",
+                      "example": "Dúvidas sobre Aproveitamento de Créditos"
+                    },
+                    "createdAt": {
+                      "type": "string",
+                      "example": "2025-08-08T02:30:00.000Z"
+                    },
+                    "userId": {
+                      "type": "number",
+                      "example": 1
+                    }
+                  },
+                  "xml": {
+                    "name": "main"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Dados inválidos (nome ou userId faltando)."
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "example": "any"
+                  },
+                  "userId": {
+                    "example": "any"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/chats/user/{userId}": {
+      "get": {
+        "tags": [
+          "Chats"
+        ],
+        "summary": "Listar as conversas de um usuário.",
+        "description": "Endpoint para obter todas as conversas de um usuário específico pelo seu ID.",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "ID do usuário para buscar as conversas."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista de conversas obtida com sucesso.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "number",
+                        "example": 1
+                      },
+                      "name": {
+                        "type": "string",
+                        "example": "Dúvidas sobre Aproveitamento de Créditos"
+                      },
+                      "createdAt": {
+                        "type": "string",
+                        "example": "2025-08-08T02:30:00.000Z"
+                      },
+                      "userId": {
+                        "type": "number",
+                        "example": 1
+                      }
+                    }
+                  },
+                  "xml": {
+                    "name": "main"
+                  }
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "number",
+                        "example": 1
+                      },
+                      "name": {
+                        "type": "string",
+                        "example": "Dúvidas sobre Aproveitamento de Créditos"
+                      },
+                      "createdAt": {
+                        "type": "string",
+                        "example": "2025-08-08T02:30:00.000Z"
+                      },
+                      "userId": {
+                        "type": "number",
+                        "example": 1
+                      }
+                    }
+                  },
+                  "xml": {
+                    "name": "main"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "ID de usuário inválido."
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/messages/": {
+      "post": {
+        "tags": [
+          "Messages"
+        ],
+        "summary": "Enviar uma nova mensagem e obter resposta.",
+        "description": "Endpoint para enviar uma nova mensagem de um usuário para uma conversa específica. A mensagem é processada e uma resposta é gerada.",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Dados da mensagem a ser enviada.",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "chatId": {
+                  "type": "number",
+                  "example": 1
+                },
+                "text": {
+                  "type": "string",
+                  "example": "Olá, preciso de ajuda com o meu plano."
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Mensagem enviada e resposta recebida com sucesso.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "number",
+                      "example": 1
+                    },
+                    "chatId": {
+                      "type": "number",
+                      "example": 1
+                    },
+                    "text": {
+                      "type": "string",
+                      "example": "Olá, preciso de ajuda com o meu plano."
+                    },
+                    "order": {
+                      "type": "number",
+                      "example": 1
+                    },
+                    "createdAt": {
+                      "type": "string",
+                      "example": "2025-08-08T02:30:00.000Z"
+                    },
+                    "role": {
+                      "type": "string",
+                      "example": "user"
+                    }
+                  },
+                  "xml": {
+                    "name": "main"
+                  }
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "number",
+                      "example": 1
+                    },
+                    "chatId": {
+                      "type": "number",
+                      "example": 1
+                    },
+                    "text": {
+                      "type": "string",
+                      "example": "Olá, preciso de ajuda com o meu plano."
+                    },
+                    "order": {
+                      "type": "number",
+                      "example": 1
+                    },
+                    "createdAt": {
+                      "type": "string",
+                      "example": "2025-08-08T02:30:00.000Z"
+                    },
+                    "role": {
+                      "type": "string",
+                      "example": "user"
+                    }
+                  },
+                  "xml": {
+                    "name": "main"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro no servidor."
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "chatId": {
+                    "example": "any"
+                  },
+                  "text": {
+                    "example": "any"
+                  },
+                  "order": {
+                    "example": "any"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/messages/{chatId}": {
+      "get": {
+        "tags": [
+          "Messages"
+        ],
+        "summary": "Obter o histórico de uma conversa.",
+        "description": "Endpoint para listar todas as mensagens de uma conversa específica, ordenadas cronologicamente.",
+        "parameters": [
+          {
+            "name": "chatId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "ID da conversa para buscar o histórico."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Histórico da conversa obtido com sucesso.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "number",
+                        "example": 2
+                      },
+                      "chatId": {
+                        "type": "number",
+                        "example": 1
+                      },
+                      "text": {
+                        "type": "string",
+                        "example": "Olá! Como posso ajudar?"
+                      },
+                      "order": {
+                        "type": "number",
+                        "example": 2
+                      },
+                      "createdAt": {
+                        "type": "string",
+                        "example": "2025-08-08T02:30:05.000Z"
+                      },
+                      "role": {
+                        "type": "string",
+                        "example": "assistant"
+                      }
+                    }
+                  },
+                  "xml": {
+                    "name": "main"
+                  }
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "number",
+                        "example": 2
+                      },
+                      "chatId": {
+                        "type": "number",
+                        "example": 1
+                      },
+                      "text": {
+                        "type": "string",
+                        "example": "Olá! Como posso ajudar?"
+                      },
+                      "order": {
+                        "type": "number",
+                        "example": 2
+                      },
+                      "createdAt": {
+                        "type": "string",
+                        "example": "2025-08-08T02:30:05.000Z"
+                      },
+                      "role": {
+                        "type": "string",
+                        "example": "assistant"
+                      }
+                    }
+                  },
+                  "xml": {
+                    "name": "main"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro no servidor."
+          }
+        }
+      }
+    }
+  }
+}
