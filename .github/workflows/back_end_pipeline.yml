@@ -49,6 +49,12 @@ jobs:
     if: ${{ inputs.pass_sast == false }}
     name: Run sast analysis
     uses: ./.github/workflows/sast.yml
+    permissions:
+      contents: write
+      issues: write
+      pull-requests: write
+      id-token: write
+      security-events: write
     with:
       path: back-end
 
