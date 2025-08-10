@@ -66,3 +66,27 @@ jobs:
       version_code: latest
       context: back-end
       docker_image_name: esg1-api
+
+  update-prod:
+    runs-on: ubuntu-22.04
+    needs: [docker-build]
+    steps:
+      - name: SSH to DigitalOcean and update environment
+        uses: appleboy/ssh-action@v1.0.3
+        env:
+          HOST: ${{ secrets.PROD_ENV_HOST }}
+          USERNAME: ${{ secrets.PROD_ENV_USERNAME }}
+          PASSWORD: ${{ secrets.SSH_PASSPHRASE }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+        with:
+          host: ${{ env.HOST}}
+          username: ${{ env.USERNAME }}
+          password: ${{ env.PASSWORD }}
+          passphrase: ${{ env.PASSWORD }}
+          key: ${{ env.key }}
+          script: |
+            docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+            docker compose down api-node || true
+            docker pull ${{ secrets.DOCKER_USERNAME }}/esg1-api:latest
+            cd application/
+            docker compose up -d api-node
