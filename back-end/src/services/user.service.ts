@@ -12,6 +12,7 @@ export class UserService {
       data: {
         id: ulid(),
         name,
+        password,
         email,
       },
     });
@@ -28,7 +29,9 @@ export class UserService {
     if (user && user.password !== password) {
       return null;
     }
-
+    if (!user) {
+      return null;
+    }
     let payload = {
       id: user.id,
       email: user.email,
