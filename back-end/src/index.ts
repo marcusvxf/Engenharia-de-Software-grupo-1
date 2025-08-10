@@ -7,6 +7,7 @@ import swaggerDocument from './swagger.json'; // <-- Importe o arquivo que geram
 import userRoutes from './routes/user.routes';
 import chatRoutes from './routes/chat.routes';
 import messageRoutes from './routes/message.route'; // <-- Adicionei a importação que faltava
+import { authenticateMiddleware } from './middlewares/authenticate.middleware';
 
 const app = express();
 
@@ -14,10 +15,8 @@ app.use(express.json());
 
 // Rota principal da documentação
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
-
 // Nossas rotas da API
 app.use('/users', userRoutes);
-app.use('/chats', chatRoutes);
-app.use('/messages', messageRoutes); // <-- Adicionei a rota que faltava
-
+app.use('/chats', authenticateMiddleware, chatRoutes);
+app.use('/messages', authenticateMiddleware, messageRoutes); // <-- Adicionei a rota que faltava
 export default app;

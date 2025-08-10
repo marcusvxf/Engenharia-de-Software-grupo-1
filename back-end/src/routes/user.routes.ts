@@ -5,7 +5,8 @@ import { createUser, getAllUsers } from '../controllers/user.controller';
 
 const router = express.Router();
 
-router.get('/',
+router.get(
+  '/',
   /* #swagger.tags = ['Users']
       #swagger.summary = 'Listar todos os usuários.'
       #swagger.description = 'Endpoint para obter uma lista de todos os usuários cadastrados no sistema.'
@@ -17,7 +18,8 @@ router.get('/',
   getAllUsers
 );
 
-router.post('/',
+router.post(
+  '/',
   /* #swagger.tags = ['Users']
       #swagger.summary = 'Criar um novo usuário.'
       #swagger.description = 'Endpoint para cadastrar um novo usuário no sistema.'
