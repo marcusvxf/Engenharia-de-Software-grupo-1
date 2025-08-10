@@ -1,20 +1,22 @@
+// back-end/src/index.ts
+
 import express from 'express';
+import swaggerUi from 'swagger-ui-express'; // <-- Importe a nova biblioteca
+import swaggerDocument from './swagger.json'; // <-- Importe o arquivo que geramos
+
 import userRoutes from './routes/user.routes';
 import chatRoutes from './routes/chat.routes';
-import messageRoutes from './routes/message.route';
-const swaggerUi = require('swagger-ui-express');
-
-// const swaggerFile = require('./swagger.json');
-import bodyParser from 'body-parser';
+import messageRoutes from './routes/message.route'; // <-- Adicionei a importação que faltava
+import { authenticateMiddleware } from './middlewares/authenticate.middleware';
 
 const app = express();
-console.log('TA etntrando aqui');
-// app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerFile));
 
 app.use(express.json());
 
+// Rota principal da documentação
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+// Nossas rotas da API
 app.use('/users', userRoutes);
-app.use('/chats', chatRoutes);
-app.use('/messages', messageRoutes);
-
+app.use('/chats', authenticateMiddleware, chatRoutes);
+app.use('/messages', authenticateMiddleware, messageRoutes); // <-- Adicionei a rota que faltava
 export default app;

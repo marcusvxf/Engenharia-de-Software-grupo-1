@@ -7,7 +7,8 @@
     "test": "jest",
     "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
     "start": "node build/server.js",
-    "build": "tsc"
+    "build": "tsc",
+    "swagger": "ts-node src/swagger.ts"
   },
   "repository": {
     "type": "git",
@@ -25,13 +26,17 @@
     "body-parser": "^2.2.0",
     "dotenv": "^16.5.0",
     "express": "~4.17.1",
+    "jsonwebtoken": "^9.0.2",
     "prisma": "^6.9.0",
-    "swagger-ui-express": "^5.0.1"
+    "swagger-ui-express": "^5.0.1",
+    "ulid": "^3.0.1"
   },
   "devDependencies": {
     "@types/express": "~4.17.14",
     "@types/jest": "^29.5.14",
+    "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^24.0.0",
+    "@types/swagger-ui-express": "^4.1.8",
     "jest": "^29.7.0",
     "swagger-autogen": "^2.23.7",
     "ts-jest": "^29.3.4",

@@ -8,9 +8,10 @@ datasource db {
 }
 
 model User {
-  id    Int    @id @default(autoincrement())
+  id    String    @id
   name  String
   email String @unique
+  password String
   Chat  Chat[]
 }
 
@@ -19,7 +20,7 @@ model Chat {
   name       String
   created_at DateTime  @default(now())
   user       User      @relation(fields: [userId], references: [id])
-  userId     Int
+  userId     String
   Message    Message[]
 }
 
