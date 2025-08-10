@@ -1,7 +1,7 @@
 // back-end/src/routes/user.routes.ts
 
 import express from 'express';
-import { createUser, getAllUsers } from '../controllers/user.controller';
+import { createUser, getAllUsers, login } from '../controllers/user.controller';
 
 const router = express.Router();
 
@@ -29,18 +29,44 @@ router.post(
           required: true,
           schema: {
               name: 'Jane Doe',
-              email: 'jane.doe@example.com'
+              email: 'jane.doe@example.com',
+              password: 'password123'
           }
       }
       #swagger.responses[201] = {
           description: 'Usuário criado com sucesso.',
-          schema: { id: 2, name: 'Jane Doe', email: 'jane.doe@example.com' }
+          schema: { id: 2, name: 'Jane Doe', email: 'jane.doe@example.com' }   
       }
       #swagger.responses[400] = {
           description: 'Dados inválidos.'
       }
   */
   createUser
+);
+
+router.post(
+  '/login',
+  /* #swagger.tags = ['Users']
+      #swagger.summary = 'Realizar login.'
+      #swagger.description = 'Endpoint para realizar o login de um usuário no sistema.'
+      #swagger.parameters['body'] = {
+          in: 'body',
+          description: 'Dados para login.',
+          required: true,
+          schema: {
+              email: 'john.doe@example.com',
+              password: 'password123'
+          }
+      }
+      #swagger.responses[200] = {
+          description: 'Login realizado com sucesso.',
+          schema: { token: 'string' }
+      }
+      #swagger.responses[400] = {
+          description: 'Dados inválidos.'
+      }
+  */
+  login
 );
 
 export default router;
