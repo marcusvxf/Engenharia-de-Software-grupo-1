@@ -1,0 +1,64 @@
+name: Pipeline to build back end
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - back-end/**
+
+  pull_request:
+    types: [closed]
+    branches:
+      - main
+    paths:
+      - back-end/**
+
+  workflow_dispatch:
+    inputs:
+      pass_sast:
+        type: boolean
+        default: false
+      pass_npm_audit:
+        type: boolean
+        default: false
+
+jobs:
+  npm-audit:
+    if: ${{ inputs.pass_npm_audit == false }}
+    name: Run npm audit
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: back-end
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run npm audit
+        run: npm audit --audit-level=high
+
+  sast:
+    if: ${{ inputs.pass_sast == false }}
+    name: Run sast analysis
+    uses: ./github/workflows/sast.yml
+    with:
+      path: back-end
+
+  docker-build:
+    name: Build and update docker image
+    needs: [npm-audit, sast]
+    uses: ./github/workflows/docker_build.yml
+    with:
+      version_code: latest
+      context: back-end
+      docker_image_name: esg1-api

@@ -1,0 +1,57 @@
+on:
+  workflow_call:
+    inputs:
+      BODY:
+        required: true
+        type: string
+      TAG_NAME:
+        required: true
+        type: string
+      SKIPPED:
+        required: true
+        type: string
+      TYPE:
+        required: false
+        type: string
+        default: 'FEATURE'
+      PRERELEASE:
+        required: false
+        type: boolean
+        default: false
+      DRAFT:
+        required: false
+        type: boolean
+        default: false
+
+    secrets:
+      GH_TOKEN:
+        required: true
+
+permissions:
+  contents: read
+
+jobs:
+  release:
+    name: Release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      issues: write
+      pull-requests: write
+      id-token: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Create Release
+        uses: actions/create-release@v1
+        if: inputs.SKIPPED != 'true'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+        with:
+          tag_name: ${{ inputs.TAG_NAME }}
+          release_name: ${{ inputs.TYPE }} - Versão ${{ inputs.TAG_NAME }}
+          body: ${{ inputs.BODY }}
+          prerelease: ${{ inputs.PRERELEASE }}
+          draft: ${{ inputs.DRAFT }}

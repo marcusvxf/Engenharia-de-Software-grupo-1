@@ -1,0 +1,47 @@
+on:
+  workflow_call:
+    secrets:
+      GH_TOKEN:
+        required: true
+    outputs:
+      body:
+        description: 'O corpo da mensagem'
+        value: ${{jobs.tag-release-text.outputs.body}}
+      tag_name:
+        description: 'O corpo da mensagem'
+        value: ${{jobs.tag-release-text.outputs.tag_name}}
+      skipped:
+        description: 'A release foi pulada'
+        value: ${{jobs.tag-release-text.outputs.skipped}}
+
+permissions:
+  contents: read
+
+jobs:
+  tag-release-text:
+    outputs:
+      body: ${{ steps.changelog.outputs.clean_changelog }}
+      tag_name: ${{ steps.changelog.outputs.tag }}
+      skipped: ${{ steps.changelog.outputs.skipped}}
+
+    name: Generate tag and release text
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      issues: write
+      pull-requests: write
+      id-token: write
+
+    steps:
+      - name: Check out the target repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GH_TOKEN }}
+
+      - name: Conventional Changelog Action
+        id: changelog
+        uses: TriPSs/conventional-changelog-action@v5
+        with:
+          github-token: ${{ secrets.GH_TOKEN }}
+          output-file: false
+          skip-on-empty: false
