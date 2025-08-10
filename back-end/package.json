@@ -6,7 +6,8 @@
   "scripts": {
     "test": "jest",
     "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
-    "start": "node dist/server.js",
+    "start": "node build/server.js",
+    "build": "tsc",
     "swagger": "ts-node src/swagger.ts"
   },
   "repository": {
