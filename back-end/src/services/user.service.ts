@@ -18,7 +18,7 @@ export class UserService {
   }
 
   async login(email: string, password: string) {
-    let private_key = process.env.PUBLIC_KEY;
+    let private_key = process.env.PUBLIC_KEY ?? '';
 
     let user = await prisma.user.findUnique({
       where: {

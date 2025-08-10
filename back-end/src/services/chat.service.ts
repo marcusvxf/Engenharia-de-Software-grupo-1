@@ -11,7 +11,7 @@ export class ChatService {
     return await prisma.chat.create({
       data: {
         name,
-        userId,
+        userId: `${userId}`,
       },
     });
   }
@@ -23,7 +23,7 @@ export class ChatService {
   async getByUserId(userId: number) {
     return await prisma.chat.findMany({
       where: {
-        userId: userId,
+        userId: `${userId}`,
       },
     });
   }
