@@ -48,14 +48,14 @@ jobs:
   sast:
     if: ${{ inputs.pass_sast == false }}
     name: Run sast analysis
-    uses: ./github/workflows/sast.yml
+    uses: ./.github/workflows/sast.yml
     with:
       path: back-end
 
   docker-build:
     name: Build and update docker image
     needs: [npm-audit, sast]
-    uses: ./github/workflows/docker_build.yml
+    uses: ./.github/workflows/docker_build.yml
     with:
       version_code: latest
       context: back-end
