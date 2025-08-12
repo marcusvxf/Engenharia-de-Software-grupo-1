@@ -1,6 +1,7 @@
 // back-end/src/index.ts
 
 import express from 'express';
+import cors from 'cors';
 import swaggerUi from 'swagger-ui-express'; // <-- Importe a nova biblioteca
 import swaggerDocument from './swagger.json'; // <-- Importe o arquivo que geramos
 
@@ -10,6 +11,13 @@ import messageRoutes from './routes/message.route'; // <-- Adicionei a importaç
 import { authenticateMiddleware } from './middlewares/authenticate.middleware';
 
 const app = express();
+
+app.use(cors({
+  origin: '*', 
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: false 
+}));
 
 app.use(express.json());
 
