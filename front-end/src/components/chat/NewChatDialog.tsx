@@ -28,7 +28,7 @@ export const NewChatDialog = ({ open, onOpenChange, onChatCreated }: NewChatDial
     if (!question.trim() || loading) return;
 
     setLoading(true);
-    const chatId = await createChat({ question: question.trim() });
+    const chatId = await createChat(question.trim());
     
     if (chatId) {
       setQuestion('');

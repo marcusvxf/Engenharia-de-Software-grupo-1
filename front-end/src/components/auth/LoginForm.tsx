@@ -9,10 +9,9 @@ import { Eye, EyeOff } from 'lucide-react';
 
 interface LoginFormProps {
   onRegister: () => void;
-  onForgotPassword: () => void;
 }
 
-export const LoginForm = ({ onRegister, onForgotPassword }: LoginFormProps) => {
+export const LoginForm = ({ onRegister }: LoginFormProps) => {
   const { login } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -87,13 +86,6 @@ export const LoginForm = ({ onRegister, onForgotPassword }: LoginFormProps) => {
           </Button>
         </form>
         <div className="mt-6 text-center space-y-2">
-          <Button
-            variant="link"
-            onClick={onForgotPassword}
-            className="text-sm text-muted-foreground"
-          >
-            Esqueci minha senha
-          </Button>
           <div className="text-sm text-muted-foreground">
             Não tem conta?{' '}
             <Button variant="link" onClick={onRegister} className="p-0 h-auto">

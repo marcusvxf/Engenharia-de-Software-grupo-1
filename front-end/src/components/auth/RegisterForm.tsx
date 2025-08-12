@@ -14,6 +14,7 @@ interface RegisterFormProps {
 export const RegisterForm = ({ onBack }: RegisterFormProps) => {
   const { register } = useAuth();
   const [email, setEmail] = useState('');
+  const [name, setName] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -23,7 +24,7 @@ export const RegisterForm = ({ onBack }: RegisterFormProps) => {
     e.preventDefault();
     setLoading(true);
     
-    const success = await register({ email, password, confirmPassword });
+    const success = await register({ email, password, confirmPassword, name });
     
     if (success) {
       onBack();
@@ -65,6 +66,17 @@ export const RegisterForm = ({ onBack }: RegisterFormProps) => {
               placeholder="usuario@cin.ufpe.br"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="name">Nome Completo</Label>
+            <Input
+              id="name"
+              type="text"
+              placeholder="Digite seu nome completo"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
               required
             />
           </div>

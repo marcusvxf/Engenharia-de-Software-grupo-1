@@ -37,7 +37,7 @@ export const ChatInterface = ({ chatId }: ChatInterfaceProps) => {
     if (!message.trim() || !chatId || sending) return;
 
     setSending(true);
-    const success = await sendMessage(chatId, { message: message.trim() });
+    const success = await sendMessage(chatId, message.trim());
     
     if (success) {
       setMessage('');
@@ -85,7 +85,7 @@ export const ChatInterface = ({ chatId }: ChatInterfaceProps) => {
       {/* Chat Header */}
       <div className="border-b bg-white p-4">
         <h2 className="text-lg font-semibold text-gray-800">
-          {currentChat?.title || 'Nova Conversa'}
+          {currentChat?.name || 'Nova Conversa'}
         </h2>
       </div>
 
@@ -112,13 +112,13 @@ export const ChatInterface = ({ chatId }: ChatInterfaceProps) => {
                     : 'bg-gray-100 text-gray-800'
                 }`}
               >
-                <p className="whitespace-pre-wrap">{msg.content}</p>
+                <p className="whitespace-pre-wrap">{msg.text}</p>
                 <p
                   className={`text-xs mt-1 ${
                     msg.isUser ? 'text-red-100' : 'text-gray-500'
                   }`}
                 >
-                  {format(new Date(msg.timestamp), 'HH:mm', { locale: ptBR })}
+                  {format(new Date(msg.createdAt), 'HH:mm', { locale: ptBR })}
                 </p>
               </div>
 
