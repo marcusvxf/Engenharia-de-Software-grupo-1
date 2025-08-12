@@ -75,7 +75,11 @@ jobs:
       version_code: latest
       context: back-end
       docker_image_name: esg1-api
-    secrets: inherit
+    secrets:
+      GH_TOKEN: ${{ secrets.GH_TOKEN }}
+      DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+      DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+      DOCKER_IMAGE_NAME: ${{ secrets.DOCKER_IMAGE_NAME }}
 
   update-prod:
     runs-on: ubuntu-22.04
