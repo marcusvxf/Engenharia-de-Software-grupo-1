@@ -38,7 +38,7 @@ jobs:
       - name: Add remote host to known_hosts
         run: |
           mkdir -p ~/.ssh
-          ssh-keyscan -H ${{ secrets.PROD_ENV_HOST }} >> ~/.ssh/known_hosts
+          ssh-keyscan -H ${{ secrets.DEPLOY_IP }} >> ~/.ssh/known_hosts
 
       - name: Deploy with SCP
         run: |
