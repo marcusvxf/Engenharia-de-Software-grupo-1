@@ -2,11 +2,7 @@ name: Update Docker Compose file on prod
 
 on:
   workflow_dispatch:
-    inputs:
-      update_envs:
-        required: false
-        default: false
-        type: boolean
+
 env:
   SSH_AUTH_SOCK: /tmp/ssh_agent.sock
 
@@ -22,9 +18,10 @@ jobs:
           echo "SHA do commit: ${{ github.sha }}"
           echo "Evento: ${{ github.event_name }}"
           echo "Data e hora UTC: $(date -u)"
+
   deploy:
     runs-on: ubuntu-24.04
-
+    environment: prod
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
