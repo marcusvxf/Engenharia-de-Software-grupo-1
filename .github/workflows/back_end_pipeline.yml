@@ -6,7 +6,7 @@ on:
       - main
     paths:
       - back-end/**
-      - .github/workflows/back_end_pipeline.yml
+      - ./.github/workflows/back_end_pipeline.yml
 
   pull_request:
     types: [closed]
