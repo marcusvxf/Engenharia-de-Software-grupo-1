@@ -19,7 +19,7 @@ interface NewChatDialogProps {
 }
 
 export const NewChatDialog = ({ open, onOpenChange, onChatCreated }: NewChatDialogProps) => {
-  const { createChat } = useChat();
+  const { createChat, sendMessage, fetchChats } = useChat();
   const [question, setQuestion] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -28,15 +28,38 @@ export const NewChatDialog = ({ open, onOpenChange, onChatCreated }: NewChatDial
     if (!question.trim() || loading) return;
 
     setLoading(true);
-    const chatId = await createChat(question.trim());
+    console.log('🚀 NewChatDialog: Criando chat com pergunta:', question.trim());
     
-    if (chatId) {
-      setQuestion('');
-      onOpenChange(false);
-      onChatCreated(chatId);
+    try {
+      // 1. Criar o chat
+      const chatId = await createChat(question.trim());
+      
+      if (chatId) {
+        console.log('✅ NewChatDialog: Chat criado com ID:', chatId);
+        
+        // 2. Enviar a primeira mensagem automaticamente
+        console.log('📤 NewChatDialog: Enviando primeira mensagem...');
+        const messageSuccess = await sendMessage(chatId, question.trim());
+        
+        if (messageSuccess) {
+          console.log('✅ NewChatDialog: Primeira mensagem enviada com sucesso');
+        } else {
+          console.log('❌ NewChatDialog: Erro ao enviar primeira mensagem');
+        }
+        
+        // Forçar atualização da lista de chats
+        console.log('🔄 NewChatDialog: Atualizando lista de chats...');
+        await fetchChats();
+        
+        setQuestion('');
+        onOpenChange(false);
+        onChatCreated(chatId);
+      }
+    } catch (error) {
+      console.error('❌ NewChatDialog: Erro no processo:', error);
+    } finally {
+      setLoading(false);
     }
-    
-    setLoading(false);
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -82,7 +105,7 @@ export const NewChatDialog = ({ open, onOpenChange, onChatCreated }: NewChatDial
               disabled={!question.trim() || loading}
               className="bg-red-600 hover:bg-red-700"
             >
-              {loading ? 'Criando...' : 'Criar Conversa'}
+              {loading ? 'Criando e enviando...' : 'Iniciar Conversa'}
             </Button>
           </div>
         </form>
