@@ -14,6 +14,7 @@ export class UserService {
         name,
         password,
         email,
+        UserType: 'user'
       },
     });
   }
@@ -42,6 +43,6 @@ export class UserService {
       expiresIn: '1d',
     });
 
-    return token;
+    return { token, userId: user.id };
   }
 }

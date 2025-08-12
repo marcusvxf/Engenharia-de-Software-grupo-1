@@ -5,9 +5,9 @@ import { toast } from '@/hooks/use-toast';
 
 const SERVER_PATH = import.meta.env.VITE_SERVER_PATH || 'http://localhost:3001';
 
-const getUserId = (): number => {
+const getUserId = (): string => {
   const storedUserId = localStorage.getItem('userId');
-  return storedUserId ? parseInt(storedUserId, 10) : 1;
+  return storedUserId
 };
 
 export const useChat = () => {

@@ -19,7 +19,6 @@ export const ChatPage = () => {
 
   const handleSelectChat = (chatId: string) => {
     setCurrentChatId(chatId);
-    setSidebarOpen(false); // Close sidebar on mobile when selecting chat
   };
 
   return (

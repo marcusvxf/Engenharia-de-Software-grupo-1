@@ -15,49 +15,32 @@ const SERVER_PATH = import.meta.env.VITE_SERVER_PATH || 'http://localhost:3000';
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [authState, setAuthState] = useState<AuthState>({
-    user: null,
+    userId: null,
     token: null,
     isAuthenticated: false,
   });
 
   useEffect(() => {
     const token = localStorage.getItem('token');
-    const userStr = localStorage.getItem('user');
+    const userId = localStorage.getItem('userId');
     
-    if (token && userStr) {
+    if (token && userId) {
       try {
-        const user = JSON.parse(userStr);
         setAuthState({
-          user,
+          userId,
           token,
           isAuthenticated: true,
         });
       } catch (error) {
         console.error('Error parsing stored user:', error);
         localStorage.removeItem('token');
-        localStorage.removeItem('user');
+        localStorage.removeItem('userId');
       }
     }
   }, []);
 
   const login = async (credentials: LoginCredentials): Promise<boolean> => {
 
-
-    if (credentials.email === '1@1.com') {
-      localStorage.setItem('token', "testeToken");
-      localStorage.setItem('user', JSON.stringify({
-        email: '1@1.com',
-        name: 'Usuário de Teste'
-      }));
-      setAuthState({
-        user: {
-          email: '1@1.com',
-          name: 'Usuário de Teste'
-        },
-        token: "testeToken",
-        isAuthenticated: true,
-      });
-    }
     try {
       const response = await fetch(`${SERVER_PATH}/users/login`, {
         method: 'POST',
@@ -69,13 +52,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
       if (response.ok) {
         const data = await response.json();
-        const { token, user } = data;
+        const { token, userId } = data;
         
         localStorage.setItem('token', token);
-        localStorage.setItem('user', JSON.stringify(user));
+        localStorage.setItem('userId', userId);
         
         setAuthState({
-          user,
+          userId,
           token,
           isAuthenticated: true,
         });
@@ -143,7 +126,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         body: JSON.stringify({
           name: credentials.name,
           email: credentials.email,
-          password: credentials.password
+          password: credentials.password,
+          UserType: 'user'
         }),
       });
 
@@ -175,9 +159,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const logout = () => {
     localStorage.removeItem('token');
-    localStorage.removeItem('user');
+    localStorage.removeItem('userId');
     setAuthState({
-      user: null,
+      userId: null,
       token: null,
       isAuthenticated: false,
     });

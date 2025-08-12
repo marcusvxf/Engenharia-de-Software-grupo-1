@@ -1,6 +1,5 @@
 import '@testing-library/jest-dom';
 
-// Mock do import.meta para Vite
 Object.defineProperty(global, 'import', {
   value: {
     meta: {
@@ -11,7 +10,6 @@ Object.defineProperty(global, 'import', {
   }
 });
 
-// Mock do localStorage
 const localStorageMock = {
   getItem: jest.fn(),
   setItem: jest.fn(),
@@ -20,10 +18,8 @@ const localStorageMock = {
 };
 global.localStorage = localStorageMock as any;
 
-// Mock do fetch
 global.fetch = jest.fn();
 
-// Mock do console.error para testes mais limpos
 const originalError = console.error;
 beforeAll(() => {
   console.error = (...args: any[]) => {
@@ -41,7 +37,6 @@ afterAll(() => {
   console.error = originalError;
 });
 
-// Limpar mocks após cada teste
 afterEach(() => {
   jest.clearAllMocks();
 });
