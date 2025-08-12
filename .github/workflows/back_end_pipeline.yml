@@ -26,9 +26,6 @@ jobs:
     if: ${{ inputs.pass_npm_audit == false }}
     name: Run npm audit
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: back-end
 
     steps:
       - name: Checkout code
