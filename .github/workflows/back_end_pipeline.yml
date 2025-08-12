@@ -30,9 +30,11 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+      - name: show files
+        run: ls
 
       - name: Go to back-end directory
-        run: cd back-end
+        run: cd back-end/
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
