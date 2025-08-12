@@ -90,10 +90,10 @@ jobs:
       - name: SSH to DigitalOcean and update environment
         uses: appleboy/ssh-action@v1.0.3
         env:
-          HOST: ${{ secrets.PROD_ENV_HOST }}
-          USERNAME: ${{ secrets.PROD_ENV_USERNAME }}
+          HOST: ${{ secrets.DEPLOY_IP }}
+          USERNAME: ${{ secrets.DEPLOY_USER }}
           PASSWORD: ${{ secrets.SSH_PASSPHRASE }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          key: ${{ secrets.SSH_KEY_FILE }}
         with:
           host: ${{ env.HOST}}
           username: ${{ env.USERNAME }}
@@ -101,8 +101,8 @@ jobs:
           passphrase: ${{ env.PASSWORD }}
           key: ${{ env.key }}
           script: |
+            cd application/
             docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
             docker compose down api-node || true
             docker pull ${{ secrets.DOCKER_USERNAME }}/esg1-api:latest
-            cd application/
             docker compose up -d api-node

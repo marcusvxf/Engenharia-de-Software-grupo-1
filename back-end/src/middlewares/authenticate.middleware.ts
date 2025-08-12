@@ -19,7 +19,9 @@ export const authenticateMiddleware = (
       token,
       process.env.JWT_PUBLIC_SECRET || 'secret'
     );
-    req.user = decoded;
+    if (!decoded) {
+      return res.status(401).json({ message: 'Token de acesso inválido.' });
+    }
     next();
   } catch (error) {
     return res.status(401).json({ message: 'Token de acesso inválido.' });

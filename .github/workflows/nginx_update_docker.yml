@@ -1,0 +1,46 @@
+name: Update nginx
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - .nginx/**
+      - .github/workflows/nginx_update_docker.yml
+
+jobs:
+  docker-build:
+    uses: ./.github/workflows/build_docker.yml
+    with:
+      path: .nginx/Dockerfile
+      context: .nginx
+      version_code: latest
+    secrets:
+      DOCKER_IMAGE_NAME: nginxcliqueescola
+      DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+      DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+      GH_TOKEN: ${{ secrets.GH_TOKEN }}
+
+  update-prod:
+    runs-on: ubuntu-22.04
+    environment: prod
+    steps:
+      - name: SSH to DigitalOcean and update environment
+        uses: appleboy/ssh-action@v1.0.3
+        env:
+          HOST: ${{ secrets.DEPLOY_IP }}
+          USERNAME: ${{ secrets.DEPLOY_USER }}
+          PASSWORD: ${{ secrets.SSH_PASSPHRASE }}
+          key: ${{ secrets.SSH_KEY_FILE }}
+        with:
+          host: ${{ env.HOST}}
+          username: ${{ env.USERNAME }}
+          password: ${{ env.PASSWORD }}
+          passphrase: ${{ env.PASSWORD }}
+          key: ${{ env.key }}
+          script: |
+            cd application/
+            docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+            docker pull ${{ secrets.DOCKER_USERNAME }}/nginx:latest
+            docker compose down nginx || true
+            docker compose up -d nginx
