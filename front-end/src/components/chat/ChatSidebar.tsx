@@ -42,25 +42,13 @@ export const ChatSidebar = ({
   onSelectChat, 
   currentChatId 
 }: ChatSidebarProps) => {
-  const { user, logout, deleteAccount } = useAuth();
-  const { chats, loading, fetchChats, deleteChat } = useChat();
+  const { user, logout } = useAuth();
+  const { chats, loading, fetchChats } = useChat();
   const [showUserMenu, setShowUserMenu] = useState(false);
 
   useEffect(() => {
     fetchChats();
   }, [fetchChats]);
-
-  const handleDeleteChat = async (chatId: string, e: React.MouseEvent) => {
-    e.stopPropagation();
-    await deleteChat(chatId);
-  };
-
-  const handleDeleteAccount = async () => {
-    const success = await deleteAccount();
-    if (success) {
-      logout();
-    }
-  };
 
   return (
     <>
@@ -137,42 +125,13 @@ export const ChatSidebar = ({
                       <MessageSquare className="h-4 w-4 text-gray-400 flex-shrink-0" />
                       <div className="min-w-0 flex-1">
                         <p className="text-sm font-medium truncate">
-                          {chat.title}
+                          {chat.name}
                         </p>
                         <p className="text-xs text-gray-400">
-                          {format(new Date(chat.updatedAt), 'dd MMM', { locale: ptBR })}
+                          {format(new Date(chat.createdAt), 'dd MMM', { locale: ptBR })}
                         </p>
                       </div>
                     </div>
-                    <AlertDialog>
-                      <AlertDialogTrigger asChild>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="opacity-0 group-hover:opacity-100 h-8 w-8 p-0 text-gray-400 hover:text-red-400 hover:bg-red-900/20"
-                          onClick={(e) => e.stopPropagation()}
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </AlertDialogTrigger>
-                      <AlertDialogContent>
-                        <AlertDialogHeader>
-                          <AlertDialogTitle>Deletar Conversa</AlertDialogTitle>
-                          <AlertDialogDescription>
-                            Tem certeza que deseja deletar esta conversa? Esta ação não pode ser desfeita.
-                          </AlertDialogDescription>
-                        </AlertDialogHeader>
-                        <AlertDialogFooter>
-                          <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                          <AlertDialogAction
-                            onClick={(e) => handleDeleteChat(chat.id, e)}
-                            className="bg-red-600 hover:bg-red-700"
-                          >
-                            Deletar
-                          </AlertDialogAction>
-                        </AlertDialogFooter>
-                      </AlertDialogContent>
-                    </AlertDialog>
                   </div>
                 ))
               )}
@@ -201,34 +160,6 @@ export const ChatSidebar = ({
                     <LogOut className="h-4 w-4 mr-2" />
                     Sair
                   </Button>
-                  <AlertDialog>
-                    <AlertDialogTrigger asChild>
-                      <Button
-                        variant="ghost"
-                        className="w-full justify-start text-red-400 hover:bg-red-900/20"
-                      >
-                        <Trash2 className="h-4 w-4 mr-2" />
-                        Deletar Conta
-                      </Button>
-                    </AlertDialogTrigger>
-                    <AlertDialogContent>
-                      <AlertDialogHeader>
-                        <AlertDialogTitle>Deletar Conta</AlertDialogTitle>
-                        <AlertDialogDescription>
-                          Tem certeza que deseja deletar sua conta? Todos os seus chats serão perdidos permanentemente.
-                        </AlertDialogDescription>
-                      </AlertDialogHeader>
-                      <AlertDialogFooter>
-                        <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                        <AlertDialogAction
-                          onClick={handleDeleteAccount}
-                          className="bg-red-600 hover:bg-red-700"
-                        >
-                          Deletar Conta
-                        </AlertDialogAction>
-                      </AlertDialogFooter>
-                    </AlertDialogContent>
-                  </AlertDialog>
                 </div>
               )}
             </div>

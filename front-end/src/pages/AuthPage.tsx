@@ -2,9 +2,8 @@
 import { useState } from 'react';
 import { LoginForm } from '@/components/auth/LoginForm';
 import { RegisterForm } from '@/components/auth/RegisterForm';
-import { ResetPasswordForm } from '@/components/auth/ResetPasswordForm';
 
-type AuthView = 'login' | 'register' | 'reset';
+type AuthView = 'login' | 'register';
 
 export const AuthPage = () => {
   const [currentView, setCurrentView] = useState<AuthView>('login');
@@ -14,14 +13,10 @@ export const AuthPage = () => {
       {currentView === 'login' && (
         <LoginForm
           onRegister={() => setCurrentView('register')}
-          onForgotPassword={() => setCurrentView('reset')}
         />
       )}
       {currentView === 'register' && (
         <RegisterForm onBack={() => setCurrentView('login')} />
-      )}
-      {currentView === 'reset' && (
-        <ResetPasswordForm onBack={() => setCurrentView('login')} />
       )}
     </div>
   );

@@ -1,24 +1,25 @@
 
 export interface Message {
   id: string;
-  content: string;
+  text: string;
   isUser: boolean;
-  timestamp: Date;
+  createdAt: Date;
 }
 
 export interface Chat {
   id: string;
-  title: string;
-  messages: Message[];
+  name: string;
   createdAt: Date;
-  updatedAt: Date;
+  userId: number;
+  messages?: Message[];
 }
 
 export interface CreateChatRequest {
-  question: string;
-  userData?: any;
+  name: string;
+  userId: number;
 }
 
 export interface SendMessageRequest {
-  message: string;
+  chatId: number;
+  text: string;
 }

@@ -1,19 +1,17 @@
 
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { AuthState, User, LoginCredentials, RegisterCredentials, ResetPasswordCredentials } from '@/types/auth';
+import { AuthState, LoginCredentials, RegisterCredentials } from '@/types/auth';
 import { toast } from '@/hooks/use-toast';
 
 interface AuthContextType extends AuthState {
   login: (credentials: LoginCredentials) => Promise<boolean>;
   register: (credentials: RegisterCredentials) => Promise<boolean>;
-  resetPassword: (credentials: ResetPasswordCredentials) => Promise<boolean>;
   logout: () => void;
-  deleteAccount: () => Promise<boolean>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-const SERVER_PATH = import.meta.env.VITE_SERVER_PATH || 'http://localhost:3001';
+const SERVER_PATH = import.meta.env.VITE_SERVER_PATH || 'http://localhost:3000';
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [authState, setAuthState] = useState<AuthState>({
@@ -43,33 +41,25 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   const login = async (credentials: LoginCredentials): Promise<boolean> => {
-    // Verificação especial para usuário de teste
+
+
     if (credentials.email === '1@1.com') {
-      const testUser: User = {
-        id: 'test-user',
+      localStorage.setItem('token', "testeToken");
+      localStorage.setItem('user', JSON.stringify({
         email: '1@1.com',
         name: 'Usuário de Teste'
-      };
-      
-      localStorage.setItem('token', 'test-token');
-      localStorage.setItem('user', JSON.stringify(testUser));
-      
+      }));
       setAuthState({
-        user: testUser,
-        token: 'test-token',
+        user: {
+          email: '1@1.com',
+          name: 'Usuário de Teste'
+        },
+        token: "testeToken",
         isAuthenticated: true,
       });
-      
-      toast({
-        title: "Login de teste realizado!",
-        description: "Acesso liberado para usuário de teste.",
-      });
-      
-      return true;
     }
-
     try {
-      const response = await fetch(`${SERVER_PATH}/auth`, {
+      const response = await fetch(`${SERVER_PATH}/users/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -135,16 +125,25 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       return false;
     }
 
+    if (credentials.name.length < 8) {
+      toast({
+        title: "Nome inválido",
+        description: "O nome deve ter pelo menos 8 caracteres.",
+        variant: "destructive",
+      });
+      return false;
+    }
+
     try {
-      const response = await fetch(`${SERVER_PATH}/auth`, {
+      const response = await fetch(`${SERVER_PATH}/users`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
+          name: credentials.name,
           email: credentials.email,
-          password: credentials.password,
-          action: 'register'
+          password: credentials.password
         }),
       });
 
@@ -174,42 +173,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const resetPassword = async (credentials: ResetPasswordCredentials): Promise<boolean> => {
-    try {
-      const response = await fetch(`${SERVER_PATH}/auth`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(credentials),
-      });
-
-      if (response.ok) {
-        toast({
-          title: "Senha alterada!",
-          description: "Sua senha foi atualizada com sucesso.",
-        });
-        return true;
-      } else {
-        const errorData = await response.json();
-        toast({
-          title: "Erro ao alterar senha",
-          description: errorData.message || "Erro ao alterar senha.",
-          variant: "destructive",
-        });
-        return false;
-      }
-    } catch (error) {
-      console.error('Reset password error:', error);
-      toast({
-        title: "Erro de conexão",
-        description: "Não foi possível conectar ao servidor.",
-        variant: "destructive",
-      });
-      return false;
-    }
-  };
-
   const logout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
@@ -224,51 +187,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     });
   };
 
-  const deleteAccount = async (): Promise<boolean> => {
-    try {
-      const response = await fetch(`${SERVER_PATH}/auth`, {
-        method: 'DELETE',
-        headers: {
-          'Authorization': `Bearer ${authState.token}`,
-          'Content-Type': 'application/json',
-        },
-      });
-
-      if (response.ok) {
-        logout();
-        toast({
-          title: "Conta deletada",
-          description: "Sua conta foi removida com sucesso.",
-        });
-        return true;
-      } else {
-        toast({
-          title: "Erro ao deletar conta",
-          description: "Não foi possível deletar sua conta.",
-          variant: "destructive",
-        });
-        return false;
-      }
-    } catch (error) {
-      console.error('Delete account error:', error);
-      toast({
-        title: "Erro de conexão",
-        description: "Não foi possível conectar ao servidor.",
-        variant: "destructive",
-      });
-      return false;
-    }
-  };
-
   return (
     <AuthContext.Provider
       value={{
         ...authState,
         login,
         register,
-        resetPassword,
         logout,
-        deleteAccount,
       }}
     >
       {children}

@@ -1,9 +1,14 @@
 import { useState, useCallback } from 'react';
-import { Chat, Message, CreateChatRequest, SendMessageRequest } from '@/types/chat';
+import { Chat, CreateChatRequest, SendMessageRequest } from '@/types/chat';
 import { useAuth } from './useAuth';
 import { toast } from '@/hooks/use-toast';
 
 const SERVER_PATH = import.meta.env.VITE_SERVER_PATH || 'http://localhost:3001';
+
+const getUserId = (): number => {
+  const storedUserId = localStorage.getItem('userId');
+  return storedUserId ? parseInt(storedUserId, 10) : 1;
+};
 
 export const useChat = () => {
   const { token } = useAuth();
@@ -16,7 +21,8 @@ export const useChat = () => {
 
     try {
       setLoading(true);
-      const response = await fetch(`${SERVER_PATH}/chat`, {
+      const userId = getUserId();
+      const response = await fetch(`${SERVER_PATH}/chats/user/${userId}`, {
         headers: {
           'Authorization': `Bearer ${token}`,
         },
@@ -49,16 +55,23 @@ export const useChat = () => {
 
     try {
       setLoading(true);
-      const response = await fetch(`${SERVER_PATH}/chat/${chatId}`, {
+      const messagesResponse = await fetch(`${SERVER_PATH}/messages/${chatId}`, {
         headers: {
           'Authorization': `Bearer ${token}`,
         },
       });
 
-      if (response.ok) {
-        const data = await response.json();
-        setCurrentChat(data);
-      } else if (response.status === 404) {
+      if (messagesResponse.ok) {
+        const messages = await messagesResponse.json();
+        // Find the chat in the current chats list to get chat info
+        const chat = chats.find(c => c.id === chatId);
+        if (chat) {
+          setCurrentChat({
+            ...chat,
+            messages: messages
+          });
+        }
+      } else if (messagesResponse.status === 404) {
         toast({
           title: "Chat não encontrado",
           description: "O chat solicitado não existe.",
@@ -75,13 +88,19 @@ export const useChat = () => {
     } finally {
       setLoading(false);
     }
-  }, [token]);
+  }, [token, chats]);
 
-  const createChat = useCallback(async (request: CreateChatRequest): Promise<string | null> => {
+  const createChat = useCallback(async (firstQuestion: string): Promise<string | null> => {
     if (!token) return null;
 
     try {
-      const response = await fetch(`${SERVER_PATH}/chat`, {
+      const userId = getUserId();
+      const request: CreateChatRequest = {
+        name: firstQuestion,
+        userId: userId
+      };
+
+      const response = await fetch(`${SERVER_PATH}/chats`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -93,7 +112,7 @@ export const useChat = () => {
       if (response.status === 201) {
         const data = await response.json();
         await fetchChats(); // Refresh chat list
-        return data.id;
+        return data.id.toString();
       } else {
         toast({
           title: "Erro ao criar chat",
@@ -113,11 +132,16 @@ export const useChat = () => {
     }
   }, [token, fetchChats]);
 
-  const sendMessage = useCallback(async (chatId: string, request: SendMessageRequest): Promise<boolean> => {
+  const sendMessage = useCallback(async (chatId: string, messageText: string): Promise<boolean> => {
     if (!token) return false;
 
     try {
-      const response = await fetch(`${SERVER_PATH}/chat/${chatId}`, {
+      const request: SendMessageRequest = {
+        chatId: parseInt(chatId, 10),
+        text: messageText
+      };
+
+      const response = await fetch(`${SERVER_PATH}/messages`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -148,46 +172,6 @@ export const useChat = () => {
     }
   }, [token, fetchChat]);
 
-  const deleteChat = useCallback(async (chatId: string): Promise<boolean> => {
-    if (!token) return false;
-
-    try {
-      const response = await fetch(`${SERVER_PATH}/chat/${chatId}`, {
-        method: 'DELETE',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
-      });
-
-      if (response.status === 204) {
-        await fetchChats(); // Refresh chat list
-        if (currentChat?.id === chatId) {
-          setCurrentChat(null);
-        }
-        toast({
-          title: "Chat deletado",
-          description: "Chat removido com sucesso.",
-        });
-        return true;
-      } else {
-        toast({
-          title: "Erro ao deletar chat",
-          description: "Não foi possível deletar o chat.",
-          variant: "destructive",
-        });
-        return false;
-      }
-    } catch (error) {
-      console.error('Error deleting chat:', error);
-      toast({
-        title: "Erro de conexão",
-        description: "Não foi possível conectar ao servidor.",
-        variant: "destructive",
-      });
-      return false;
-    }
-  }, [token, fetchChats, currentChat]);
-
   return {
     chats,
     currentChat,
@@ -196,7 +180,6 @@ export const useChat = () => {
     fetchChat,
     createChat,
     sendMessage,
-    deleteChat,
     setCurrentChat,
   };
 };
