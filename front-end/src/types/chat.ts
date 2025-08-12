@@ -16,7 +16,7 @@ export interface Chat {
 
 export interface CreateChatRequest {
   name: string;
-  userId: number;
+  userId: string;
 }
 
 export interface SendMessageRequest {

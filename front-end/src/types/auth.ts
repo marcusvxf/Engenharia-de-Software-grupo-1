@@ -5,7 +5,7 @@ export interface User {
 }
 
 export interface AuthState {
-  user: User | null;
+  userId: string | null;
   token: string | null;
   isAuthenticated: boolean;
 }
