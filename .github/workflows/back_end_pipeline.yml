@@ -34,7 +34,8 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Go to back-end directory
+      - name: show files
+        run: ls
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
