@@ -74,6 +74,7 @@ jobs:
     with:
       version_code: latest
       context: back-end
+      path: back-end/Dockerfile
       docker_image_name: esg1-api
     secrets:
       GH_TOKEN: ${{ secrets.GH_TOKEN }}
