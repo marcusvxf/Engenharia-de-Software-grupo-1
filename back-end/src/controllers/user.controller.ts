@@ -17,6 +17,10 @@ export const createUser = async (req: Request, res: Response) => {
 
 export const login = async (req: Request, res: Response) => {
   const { email, password } = req.body;
-  const token = await userService.login(email, password);
-  res.json({ token });
+  const data = await userService.login(email, password);
+  if (!data) {
+    return res.status(401).json({ message: 'Credenciais inválidas' });
+  }
+  console.log('data', data);
+  res.json(data);
 };

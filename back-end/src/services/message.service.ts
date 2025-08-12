@@ -4,15 +4,13 @@ export class MessageService {
   async create(
     chatId: string | number,
     text: string,
-    order: number,
-    sender: string = "user" // valor padrão
+    order: number = 1, // valor padrão
   ) {
     return await prisma.message.create({
       data: {
         chatId: Number(chatId),
         text,
-        order,
-        sender
+        order
       },
     });
   }
