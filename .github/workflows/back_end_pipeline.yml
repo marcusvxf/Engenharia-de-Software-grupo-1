@@ -21,6 +21,11 @@ on:
         type: boolean
         default: false
 
+permissions:
+  contents: write
+  pull-requests: write
+  security-events: write
+
 jobs:
   npm-audit:
     if: ${{ inputs.pass_npm_audit == false }}
@@ -70,14 +75,7 @@ jobs:
       version_code: latest
       context: back-end
       docker_image_name: esg1-api
-    permissions:
-      contents: read
-      pull-requests: write
-    secrets:
-      GH_TOKEN: ${{ secrets.GH_TOKEN }}
-      DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-      DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-      DOCKER_IMAGE_NAME: ${{ secrets.DOCKER_IMAGE_NAME }}
+    secrets: inherit
 
   update-prod:
     runs-on: ubuntu-22.04
