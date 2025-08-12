@@ -4,9 +4,6 @@ on:
   push:
     branches:
       - main
-    paths:
-      - back-end/**
-      - ./.github/workflows/back_end_pipeline.yml
 
   pull_request:
     types: [closed]
