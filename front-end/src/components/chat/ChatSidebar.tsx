@@ -15,17 +15,6 @@ import {
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from '@/components/ui/alert-dialog';
 
 interface ChatSidebarProps {
   isOpen: boolean;
@@ -42,13 +31,24 @@ export const ChatSidebar = ({
   onSelectChat, 
   currentChatId 
 }: ChatSidebarProps) => {
-  const { user, logout } = useAuth();
-  const { chats, loading, fetchChats } = useChat();
+  const { userId, logout } = useAuth();
+  const { chats, loading, fetchChats, refreshTrigger } = useChat();
   const [showUserMenu, setShowUserMenu] = useState(false);
-
+  const userName = localStorage.getItem('name') || '';
+  
   useEffect(() => {
     fetchChats();
   }, [fetchChats]);
+
+  // Adicionar logs para debug
+  useEffect(() => {
+    console.log('🔄 ChatSidebar: Lista de chats atualizada:', chats.length, 'chats');
+  }, [chats]);
+
+  // Reagir ao refreshTrigger
+  useEffect(() => {
+    console.log('🔄 ChatSidebar: RefreshTrigger mudou:', refreshTrigger);
+  }, [refreshTrigger]);
 
   return (
     <>
@@ -117,9 +117,9 @@ export const ChatSidebar = ({
                     className={`
                       group flex items-center justify-between p-3 rounded-lg cursor-pointer
                       transition-colors duration-200 hover:bg-gray-800
-                      ${currentChatId === chat.id ? 'bg-gray-800' : ''}
+                      ${currentChatId === chat.id.toString() ? 'bg-gray-800' : ''}
                     `}
-                    onClick={() => onSelectChat(chat.id)}
+                    onClick={() => onSelectChat(chat.id.toString())}
                   >
                     <div className="flex items-center space-x-3 min-w-0 flex-1">
                       <MessageSquare className="h-4 w-4 text-gray-400 flex-shrink-0" />
@@ -128,7 +128,10 @@ export const ChatSidebar = ({
                           {chat.name}
                         </p>
                         <p className="text-xs text-gray-400">
-                          {format(new Date(chat.createdAt), 'dd MMM', { locale: ptBR })}
+                          {chat.createdAt && !isNaN(new Date(chat.createdAt).getTime()) 
+                            ? format(new Date(chat.createdAt), 'dd MMM', { locale: ptBR })
+                            : 'Data inválida'
+                          }
                         </p>
                       </div>
                     </div>
@@ -147,7 +150,7 @@ export const ChatSidebar = ({
                 className="w-full justify-start text-white hover:bg-gray-800"
               >
                 <User className="h-4 w-4 mr-2" />
-                {user?.email}
+                {userName || 'Usuário'}
               </Button>
               
               {showUserMenu && (

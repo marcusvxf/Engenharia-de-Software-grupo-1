@@ -17,18 +17,21 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [authState, setAuthState] = useState<AuthState>({
     userId: null,
     token: null,
+    userName: null,
     isAuthenticated: false,
   });
 
   useEffect(() => {
     const token = localStorage.getItem('token');
     const userId = localStorage.getItem('userId');
+    const userName = localStorage.getItem('name');
     
     if (token && userId) {
       try {
         setAuthState({
           userId,
           token,
+          userName,
           isAuthenticated: true,
         });
       } catch (error) {
@@ -52,14 +55,16 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
       if (response.ok) {
         const data = await response.json();
-        const { token, userId } = data;
+        const { token, userId, name } = data;
         
         localStorage.setItem('token', token);
         localStorage.setItem('userId', userId);
-        
+        localStorage.setItem('name', name);
+
         setAuthState({
           userId,
           token,
+          userName: name,
           isAuthenticated: true,
         });
         
@@ -163,6 +168,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setAuthState({
       userId: null,
       token: null,
+      userName: null,
       isAuthenticated: false,
     });
     toast({

@@ -5,8 +5,6 @@ import { Textarea } from '@/components/ui/textarea';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { useChat } from '@/hooks/useChat';
 import { Send, Bot, User } from 'lucide-react';
-import { format } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
 
 interface ChatInterfaceProps {
   chatId?: string;
@@ -20,9 +18,14 @@ export const ChatInterface = ({ chatId }: ChatInterfaceProps) => {
 
   useEffect(() => {
     if (chatId) {
+      console.log('Carregando chat:', chatId);
       fetchChat(chatId);
     }
   }, [chatId, fetchChat]);
+
+  useEffect(() => {
+    console.log('Chat atual atualizado:', currentChat);
+  }, [currentChat]);
 
   useEffect(() => {
     scrollToBottom();
@@ -92,7 +95,8 @@ export const ChatInterface = ({ chatId }: ChatInterfaceProps) => {
       {/* Messages */}
       <ScrollArea className="flex-1 p-4">
         <div className="space-y-4 max-w-4xl mx-auto">
-          {currentChat?.messages?.map((msg) => (
+          {currentChat?.messages && currentChat.messages.length > 0 ? (
+            currentChat.messages.map((msg) => (
             <div
               key={msg.id}
               className={`flex items-start space-x-3 ${
@@ -113,13 +117,6 @@ export const ChatInterface = ({ chatId }: ChatInterfaceProps) => {
                 }`}
               >
                 <p className="whitespace-pre-wrap">{msg.text}</p>
-                <p
-                  className={`text-xs mt-1 ${
-                    msg.isUser ? 'text-red-100' : 'text-gray-500'
-                  }`}
-                >
-                  {format(new Date(msg.createdAt), 'HH:mm', { locale: ptBR })}
-                </p>
               </div>
 
               {msg.isUser && (
@@ -128,7 +125,13 @@ export const ChatInterface = ({ chatId }: ChatInterfaceProps) => {
                 </div>
               )}
             </div>
-          ))}
+            ))
+          ) : (
+            <div className="text-center text-gray-500 mt-8">
+              <Bot className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+              <p>Nenhuma mensagem ainda. Comece a conversar!</p>
+            </div>
+          )}
           <div ref={messagesEndRef} />
         </div>
       </ScrollArea>
