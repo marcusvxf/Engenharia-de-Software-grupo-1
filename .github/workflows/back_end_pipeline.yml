@@ -70,7 +70,7 @@ jobs:
   update-prod:
     runs-on: ubuntu-22.04
     needs: [docker-build]
-    environment: production
+    environment: prod
     steps:
       - name: SSH to DigitalOcean and update environment
         uses: appleboy/ssh-action@v1.0.3
