@@ -10,13 +10,13 @@ on:
 
 jobs:
   docker-build:
-    uses: ./.github/workflows/build_docker.yml
+    uses: ./.github/workflows/docker_build.yml
     with:
       path: .nginx/Dockerfile
       context: .nginx
       version_code: latest
     secrets:
-      DOCKER_IMAGE_NAME: nginxcliqueescola
+      DOCKER_IMAGE_NAME: nginx
       DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
       DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
       GH_TOKEN: ${{ secrets.GH_TOKEN }}
