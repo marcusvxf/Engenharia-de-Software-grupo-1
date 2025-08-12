@@ -43,6 +43,6 @@ export class UserService {
       expiresIn: '1d',
     });
 
-    return { token, userId: user.id };
+    return { token, userId: user.id, name: user.name };
   }
 }
