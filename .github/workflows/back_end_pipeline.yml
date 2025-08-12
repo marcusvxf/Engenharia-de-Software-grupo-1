@@ -66,6 +66,9 @@ jobs:
       version_code: latest
       context: back-end
       docker_image_name: esg1-api
+    permissions:
+      contents: read
+      pull-requests: write
     secrets:
       GH_TOKEN: ${{ secrets.GH_TOKEN }}
       DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
