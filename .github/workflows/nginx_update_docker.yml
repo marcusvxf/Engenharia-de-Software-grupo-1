@@ -8,6 +8,10 @@ on:
       - .nginx/**
       - .github/workflows/nginx_update_docker.yml
 
+permissions:
+  contents: write
+  pull-requests: write
+  security-events: write
 jobs:
   docker-build:
     uses: ./.github/workflows/docker_build.yml
