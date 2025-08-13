@@ -49,6 +49,18 @@ services:
         aliases:
           - service-connection
 
+  rag:
+    image: marcusvxf/rag:latest
+    container_name: rag
+    networks:
+      service-connection:
+        aliases:
+          - service-connection
+    expose:
+      - 8000
+    environment:
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+
 networks:
   service-connection:
     driver: bridge

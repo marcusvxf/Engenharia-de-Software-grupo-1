@@ -1,0 +1,34 @@
+# Etapa 1: build das dependências
+FROM python:3.12-slim AS builder
+
+WORKDIR /app
+
+# Evita cache e define encoding padrão
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1
+
+# Instala dependências do sistema (se precisar)
+RUN apt-get update && apt-get install -y --no-install-recommends build-essential
+
+# Copia arquivos de dependências
+COPY requirements.txt .
+
+# Instala dependências em /install
+RUN pip install --no-cache-dir --prefix=/install -r requirements.txt
+
+# Etapa 2: imagem final
+FROM python:3.12-slim
+
+WORKDIR /app
+
+# Copia dependências já instaladas
+COPY --from=builder /install /usr/local
+
+# Copia código da aplicação
+COPY . .
+
+# Porta do uvicorn
+EXPOSE 8000
+
+# Comando padrão de produção
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]

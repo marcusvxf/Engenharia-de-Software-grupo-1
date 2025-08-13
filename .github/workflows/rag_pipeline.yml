@@ -1,0 +1,83 @@
+name: Pipeline to build back end
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - RAG_CIN/**
+      - .github/workflows/rag_pipeline.yml
+
+  pull_request:
+    types: [closed]
+    branches:
+      - main
+    paths:
+      - RAG_CIN/**
+
+  workflow_dispatch:
+    inputs:
+      pass_sast:
+        type: boolean
+        default: false
+      pass_npm_audit:
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+  pull-requests: write
+  security-events: write
+
+jobs:
+  sast:
+    if: ${{ inputs.pass_sast == false }}
+    name: Run sast analysis
+    uses: ./.github/workflows/sast.yml
+    permissions:
+      contents: write
+      issues: write
+      pull-requests: write
+      id-token: write
+      security-events: write
+    with:
+      path: RAG_CIN
+
+  docker-build:
+    name: Build and update docker image
+    needs: [sast]
+    uses: ./.github/workflows/docker_build.yml
+    with:
+      version_code: latest
+      context: RAG_CIN
+      path: RAG_CIN/dockerfile
+      docker_image_name: esg1-api
+    secrets:
+      GH_TOKEN: ${{ secrets.GH_TOKEN }}
+      DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+      DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+
+  update-prod:
+    runs-on: ubuntu-22.04
+    needs: [docker-build]
+    environment: prod
+    steps:
+      - name: SSH to DigitalOcean and update environment
+        uses: appleboy/ssh-action@v1.0.3
+        env:
+          HOST: ${{ secrets.DEPLOY_IP }}
+          USERNAME: ${{ secrets.DEPLOY_USER }}
+          PASSWORD: ${{ secrets.SSH_PASSPHRASE }}
+          key: ${{ secrets.SSH_KEY_FILE }}
+        with:
+          host: ${{ env.HOST}}
+          username: ${{ env.USERNAME }}
+          password: ${{ env.PASSWORD }}
+          passphrase: ${{ env.PASSWORD }}
+          key: ${{ env.key }}
+          script: |
+            cd application/
+            docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+            docker compose down rag || true
+            docker pull ${{ secrets.DOCKER_USERNAME }}/rag:latest
+            docker compose up -d rag
