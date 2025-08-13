@@ -107,6 +107,9 @@ jobs:
           mkdir -p ~/.ssh
           ssh-keyscan -H ${{ secrets.DEPLOY_IP }} >> ~/.ssh/known_hosts
 
+      - name: show files
+        run: ls
+
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
@@ -118,7 +121,6 @@ jobs:
           npm install
 
       - name: Build vite app
-
         run: |
           npm run build
 
