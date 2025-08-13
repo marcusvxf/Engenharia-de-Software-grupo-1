@@ -78,7 +78,7 @@ jobs:
   #       - name: Run tests
   #         env:
   #           MIN_COVERAGE: 40
-  #         run: npm test -- --coverage --coverageThreshold=${MIN_COVERAGE}
+  #         run: npm run test
 
   build-web-and-deploy:
     runs-on: ubuntu-24.04
@@ -110,7 +110,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 18.20.0
+          node-version: 22.13.1
           cache: 'npm'
 
       - name: install node modules
