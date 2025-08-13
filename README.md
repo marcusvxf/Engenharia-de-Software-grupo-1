@@ -7,6 +7,7 @@
 - Matheus Pessoa
 - Igor Rego
 - Marcus Vinicius
+- Flávio Henrique
 ---
 
 ## 🧠 Contexto
