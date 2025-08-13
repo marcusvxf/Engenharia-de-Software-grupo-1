@@ -114,7 +114,7 @@ async def search_documents(query: Query) -> Dict[str, Any]:
     print(query.text)
     try:
         result = qa_chain(query.text)
-        print(result)
+
         response = {
             "query": query.text,
             "answer": result["result"],
