@@ -8,49 +8,117 @@ import unicodedata
 import fitz
 import re
 
-# LangChain e Ollama
-from langchain_ollama import OllamaEmbeddings, ChatOllama
+from dotenv import load_dotenv
+import pytesseract
+from pdf2image import convert_from_path
+from PIL import Image
+from concurrent.futures import ThreadPoolExecutor, as_completed
+
+# Configuração do Tesseract (mude o caminho se necessário no Windows)
+pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
+
+# LangChain e OpenAI
+from langchain_openai import OpenAIEmbeddings, ChatOpenAI
+
 from langchain_chroma import Chroma
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.chains import RetrievalQA
+from langchain.prompts import PromptTemplate
 
-# 🔹 Pastas para uploads e vetores
+
+# Configuração inicial
+load_dotenv()
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+if not OPENAI_API_KEY:
+    raise RuntimeError("OPENAI_API_KEY não encontrado! Verifique seu .env.")
+
+
 UPLOAD_FOLDER = "documents"
 VECTOR_STORE_DIR = "vectorestore"
 Path(UPLOAD_FOLDER).mkdir(exist_ok=True)
 Path(VECTOR_STORE_DIR).mkdir(exist_ok=True)
 
-# 🔹 Inicializa embeddings e repositório vetorial
-embedding_model = OllamaEmbeddings(model="nomic-embed-text",base_url="http://104.248.210.79:5005")  # Modelo de embeddings do Ollama
+
+# Inicializa embeddings e vetor
+embedding_model = OpenAIEmbeddings(openai_api_key=OPENAI_API_KEY)
+
 vector_store = Chroma(
     embedding_function=embedding_model,
     persist_directory=VECTOR_STORE_DIR
 )
 
-# 🔹 LLM e QA Chain (RAG)
-llm = ChatOllama(model="deepseek-r1:1.5b",base_url="http://104.248.210.79:5005")  
+
+# LLM e prompt
+llm = ChatOpenAI(openai_api_key=OPENAI_API_KEY)
+template = """
+Você é um assistente virtual que responde a perguntas usando apenas o contexto fornecido.
+Sua resposta DEVE ser em português.
+Se a resposta não estiver no contexto fornecido, diga "Não tenho informações suficientes para responder a essa pergunta."
+
+Contexto: {context}
+Pergunta: {question}
+
+Resposta em português:
+"""
+PROMPT = PromptTemplate(template=template, input_variables=["context", "question"])
+
+
 qa_chain = RetrievalQA.from_chain_type(
     llm=llm,
     retriever=vector_store.as_retriever(),
-    return_source_documents=True
+    return_source_documents=True,
+    chain_type_kwargs={"prompt": PROMPT}
 )
 
-# 🔹 Models
+# Modelo
 class Query(BaseModel):
     text: str
     max_results: int = 3
 
-# 🔹 Utilitários
+# Funções
 def sanitize_filename(filename: str) -> str:
     nfkd = unicodedata.normalize("NFKD", filename)
     return "".join([c for c in nfkd if not unicodedata.combining(c)]).replace(" ", "_")
 
-def extract_text_from_pdf(file_path: str) -> str:
+def ocr_page(file_path: str, page_number: int) -> str:
+    """Executa OCR em uma página específica do PDF"""
+    images = convert_from_path(file_path, first_page=page_number, last_page=page_number, dpi=300)
     text = ""
-    with fitz.open(file_path) as pdf:
-        for page in pdf:
-            text += page.get_text()
+    for img in images:
+        text += pytesseract.image_to_string(img, lang="por")
     return text
+
+def extract_text_from_pdf(file_path: str) -> str:
+    """Primeiro tenta leitura normal; se falhar, usa OCR."""
+    text_parts = []
+    ocr_needed = []
+
+    with fitz.open(file_path) as pdf:
+        total_pages = len(pdf)
+        print(f"📄 Total de páginas: {total_pages}")
+
+        for i, page in enumerate(pdf, start=1):
+            page_text = page.get_text()
+            if page_text.strip():
+                text_parts.append(page_text)
+            else:
+                ocr_needed.append(i)
+
+    # Se houver páginas sem texto, usa OCR em paralelo
+    if ocr_needed:
+        print(f"⚠ Páginas sem texto detectadas: {ocr_needed}")
+        with ThreadPoolExecutor(max_workers=4) as executor:
+            futures = {executor.submit(ocr_page, file_path, i): i for i in ocr_needed}
+            for future in as_completed(futures):
+                page_num = futures[future]
+                try:
+                    ocr_result = future.result()
+                    text_parts.append(ocr_result)
+                    print(f"✅ OCR concluído para página {page_num}")
+                except Exception as e:
+                    print(f"❌ Erro no OCR da página {page_num}: {e}")
+
+    return "".join(text_parts)
 
 def clean_text(text: str) -> str:
     return re.sub(r"\s+", " ", text).strip()
@@ -62,10 +130,8 @@ def split_text(text: str, chunk_size=1000, chunk_overlap=200) -> list:
     )
     return splitter.split_text(text)
 
-# 🔹 Banco de dados local
-documents_db = {}
 
-# 🔹 API Router
+documents_db = {}
 router = APIRouter()
 
 @router.post("/upload/", summary="Faz upload e indexa um PDF")
@@ -114,8 +180,7 @@ async def search_documents(query: Query) -> Dict[str, Any]:
     print(query.text)
     try:
         result = qa_chain(query.text)
-
-        response = {
+        return {
             "query": query.text,
             "answer": result["result"],
             "sources": [
@@ -126,8 +191,6 @@ async def search_documents(query: Query) -> Dict[str, Any]:
                 for doc in result["source_documents"]
             ]
         }
-        return response
-
     except Exception as e:
         print(e)
         raise HTTPException(status_code=500, detail=f"Erro na geração de resposta: {str(e)}")
