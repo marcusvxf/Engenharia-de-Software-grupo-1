@@ -51,7 +51,7 @@ jobs:
       version_code: latest
       context: RAG_CIN
       path: RAG_CIN/dockerfile
-      docker_image_name: esg1-api
+      docker_image_name: rag
     secrets:
       GH_TOKEN: ${{ secrets.GH_TOKEN }}
       DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
