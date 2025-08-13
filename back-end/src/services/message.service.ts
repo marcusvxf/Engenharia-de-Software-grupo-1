@@ -15,11 +15,12 @@ export class MessageService {
       },
       take: 1,
     });
+    let lastOrder = getLastOrder[0]?.order ?? order ?? 1;
     return await prisma.message.create({
       data: {
         chatId: Number(chatId),
         text,
-        order: getLastOrder[0].order + 1 ?? order,
+        order: lastOrder ?? 1,
       },
     });
   }
