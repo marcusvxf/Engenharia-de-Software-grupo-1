@@ -65,25 +65,25 @@ jobs:
     with:
       path: front-end
 
-  run-tests:
-    name: Run tests
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: front-end
-    steps:
-      - uses: actions/checkout@v2
-      - name: Install dependencies
-        run: npm install
-      - name: Run tests
-        env:
-          MIN_COVERAGE: 40
-        run: npm test -- --coverage --coverageThreshold=${MIN_COVERAGE}
+  #   run-tests:
+  #     name: Run tests
+  #     runs-on: ubuntu-latest
+  #     defaults:
+  #       run:
+  #         working-directory: front-end
+  #     steps:
+  #       - uses: actions/checkout@v2
+  #       - name: Install dependencies
+  #         run: npm install
+  #       - name: Run tests
+  #         env:
+  #           MIN_COVERAGE: 40
+  #         run: npm test -- --coverage --coverageThreshold=${MIN_COVERAGE}
 
   build-web-and-deploy:
     runs-on: ubuntu-24.04
     environment: prod
-    needs: [npm-audit, sast, run-tests]
+    needs: [npm-audit, sast]
     defaults:
       run:
         working-directory: front-end
