@@ -16,7 +16,7 @@ services:
 
   api-node:
     image: marcusvxf/esg1-api:latest
-    command: bash -c "npx prisma generate && npm run dev"
+    command: bash -c "npx prisma migrate dev && npx prisma generate && npm run dev"
     container_name: api-node
     networks:
       service-connection:
