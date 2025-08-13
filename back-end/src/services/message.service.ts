@@ -19,7 +19,7 @@ export class MessageService {
       data: {
         chatId: Number(chatId),
         text,
-        order: order || getLastOrder[0].order + 1,
+        order: getLastOrder[0].order + 1 ?? order,
       },
     });
   }
