@@ -121,7 +121,7 @@ jobs:
 
       - name: Build vite app
         env:
-          VITE_SERVER_PATH: http://24.199.115.89:413
+          VITE_SERVER_PATH: http://24.199.115.89:6033
         run: |
           npm run build
 
