@@ -1,4 +1,4 @@
-name: Pipeline to build back end
+name: Pipeline to build RAG
 
 on:
   push:
