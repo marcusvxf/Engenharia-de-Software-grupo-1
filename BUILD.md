@@ -13,6 +13,10 @@ Este documento descreve como configurar, construir e executar o projeto AcadIA l
 
 ---
 
+## Teste
+
+Caso queira usar a aplicação ela já foi levantada na seguinte url podendo testar o fluxo completo http://24.199.115.89
+
 ## 🚀 Subindo com Docker
 
 Este é o método recomendado.
