@@ -17,6 +17,11 @@ Este documento descreve como configurar, construir e executar o projeto AcadIA l
 
 Caso queira usar a aplicação ela já foi levantada na seguinte url podendo testar o fluxo completo http://24.199.115.89
 
+No momento ele está limitado a perguntas sobre estagio como:
+
+"Quantas horas preciso para estagio"
+"A partir de qual periodo posso estagio em engenharia da computaçaõ"
+
 ## 🚀 Subindo com Docker
 
 Este é o método recomendado.
