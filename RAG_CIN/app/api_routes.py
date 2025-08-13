@@ -7,19 +7,13 @@ import os
 import unicodedata
 import fitz
 import re
-from dotenv import load_dotenv
 
-# LangChain e OpenAI (atualizado)
-from langchain_openai import OpenAIEmbeddings, ChatOpenAI
+# LangChain e Ollama
+from langchain_community.embeddings import OllamaEmbeddings
+from langchain_community.chat_models import ChatOllama
 from langchain_chroma import Chroma
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.chains import RetrievalQA
-
-# 🔹 Configuração inicial
-load_dotenv()
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-if not OPENAI_API_KEY:
-    raise RuntimeError("OPENAI_API_KEY não encontrado! Verifique seu .env.")
 
 # 🔹 Pastas para uploads e vetores
 UPLOAD_FOLDER = "documents"
@@ -28,14 +22,14 @@ Path(UPLOAD_FOLDER).mkdir(exist_ok=True)
 Path(VECTOR_STORE_DIR).mkdir(exist_ok=True)
 
 # 🔹 Inicializa embeddings e repositório vetorial
-embedding_model = OpenAIEmbeddings(openai_api_key=OPENAI_API_KEY)
+embedding_model = OllamaEmbeddings(model="nomic-embed-text",base_url="http://104.248.210.79:5005")  # Modelo de embeddings do Ollama
 vector_store = Chroma(
     embedding_function=embedding_model,
     persist_directory=VECTOR_STORE_DIR
 )
 
 # 🔹 LLM e QA Chain (RAG)
-llm = ChatOpenAI(openai_api_key=OPENAI_API_KEY)
+llm = ChatOllama(model="deepseek-r1:1.5b")  # Troque pelo modelo que você baixou no Ollama
 qa_chain = RetrievalQA.from_chain_type(
     llm=llm,
     retriever=vector_store.as_retriever(),
@@ -69,7 +63,7 @@ def split_text(text: str, chunk_size=1000, chunk_overlap=200) -> list:
     )
     return splitter.split_text(text)
 
-# 🔹 Banco de dados local (pode ser trocado por Mongo/PostgreSQL)
+# 🔹 Banco de dados local
 documents_db = {}
 
 # 🔹 API Router
