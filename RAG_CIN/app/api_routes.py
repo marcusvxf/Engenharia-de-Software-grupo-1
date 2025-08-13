@@ -9,8 +9,7 @@ import fitz
 import re
 
 # LangChain e Ollama
-from langchain_community.embeddings import OllamaEmbeddings
-from langchain_community.chat_models import ChatOllama
+from langchain_ollama import OllamaEmbeddings, ChatOllama
 from langchain_chroma import Chroma
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.chains import RetrievalQA
