@@ -49,3 +49,6 @@ services:
 networks:
   service-connection:
     driver: bridge
+
+volumes:
+  db-data:
