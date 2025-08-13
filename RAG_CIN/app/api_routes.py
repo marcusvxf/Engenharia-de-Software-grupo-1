@@ -29,7 +29,7 @@ vector_store = Chroma(
 )
 
 # 🔹 LLM e QA Chain (RAG)
-llm = ChatOllama(model="deepseek-r1:1.5b")  
+llm = ChatOllama(model="deepseek-r1:1.5b",base_url="http://104.248.210.79:5005")  
 qa_chain = RetrievalQA.from_chain_type(
     llm=llm,
     retriever=vector_store.as_retriever(),
