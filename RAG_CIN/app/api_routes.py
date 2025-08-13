@@ -21,7 +21,7 @@ Path(UPLOAD_FOLDER).mkdir(exist_ok=True)
 Path(VECTOR_STORE_DIR).mkdir(exist_ok=True)
 
 # 🔹 Inicializa embeddings e repositório vetorial
-embedding_model = OllamaEmbeddings(model="nomic-embed-text",base_url="http://104.248.210.79:5005")  # Modelo de embeddings do Ollama
+embedding_model = OllamaEmbeddings(model="deepseek-r1:1.5b",base_url="http://104.248.210.79:5005")  # Modelo de embeddings do Ollama
 vector_store = Chroma(
     embedding_function=embedding_model,
     persist_directory=VECTOR_STORE_DIR
