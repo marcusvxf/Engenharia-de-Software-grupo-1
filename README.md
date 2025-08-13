@@ -7,6 +7,7 @@
 - Matheus Pessoa
 - Igor Rego
 - Marcus Vinicius
+- Flávio Henrique
 ---
 
 ## 🧠 Contexto
@@ -17,7 +18,7 @@ Em instituições de ensino superior como o CIn/UFPE, a comunicação entre alun
 
 ## 🎯 Objetivo
 
-**(Sem nome por hora)** é uma plataforma que utiliza **IA generativa com RAG (Retrieval-Augmented Generation)** para fornecer uma interface de busca inteligente baseada nos documentos oficiais da instituição, além de ajuda na comunicação entre os membros da universidade.  
+**CinChat** é uma plataforma que utiliza **IA generativa com RAG (Retrieval-Augmented Generation)** para fornecer uma interface de busca inteligente baseada nos documentos oficiais da instituição, além de ajuda na comunicação entre os membros da universidade.  
 
 Com ela, os usuários podem:
 
