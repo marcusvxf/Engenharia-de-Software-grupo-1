@@ -12,7 +12,7 @@ services:
           - service-connection
 
   api-node:
-    image:
+    image: marcusvxf/esg1-api:latest
     command: npm run start
     container_name: api-node
     networks:
