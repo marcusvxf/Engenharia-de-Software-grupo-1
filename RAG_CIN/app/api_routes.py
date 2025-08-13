@@ -23,8 +23,10 @@ if not OPENAI_API_KEY:
     raise RuntimeError("OPENAI_API_KEY não encontrado! Verifique seu .env.")
 
 UPLOAD_FOLDER = "documents"
+INITIAL_DOCS_FOLDER = "initial_docs"  # 🔹 Pasta para PDFs pré-carregados
 VECTOR_STORE_DIR = "vectorestore"
 Path(UPLOAD_FOLDER).mkdir(exist_ok=True)
+Path(INITIAL_DOCS_FOLDER).mkdir(exist_ok=True)
 Path(VECTOR_STORE_DIR).mkdir(exist_ok=True)
 
 # Inicializa embeddings e vetor
@@ -34,15 +36,21 @@ vector_store = Chroma(
     persist_directory=VECTOR_STORE_DIR
 )
 
-# LLM e prompt
-llm = ChatOpenAI(openai_api_key=OPENAI_API_KEY)
+# LLM e prompt reforçado
+llm = ChatOpenAI(openai_api_key=OPENAI_API_KEY, temperature=0)  # 🔹 mais preciso
+
 template = """
 Você é um assistente virtual que responde a perguntas usando apenas o contexto fornecido.
-Responda EXCLUSIVAMENTE em português, mesmo que a pergunta esteja em outro idioma.
-Se a resposta não estiver no contexto fornecido, diga exatamente: "Não tenho informações suficientes para responder a essa pergunta."
+Responda SEMPRE e EXCLUSIVAMENTE em português do Brasil, mesmo que a pergunta esteja em outro idioma.
+Não invente informações que não estejam no contexto.
+Se a resposta não estiver no contexto fornecido, diga exatamente:
+"Não tenho informações suficientes para responder a essa pergunta."
 
-Contexto: {context}
-Pergunta: {question}
+Contexto:
+{context}
+
+Pergunta:
+{question}
 
 Resposta em português:
 """
@@ -85,8 +93,36 @@ def split_text(text: str, chunk_size=1000, chunk_overlap=200) -> list:
     )
     return splitter.split_text(text)
 
+# Banco de dados local
 documents_db = {}
 router = APIRouter()
+
+# 🔹 Função de pré-carregamento
+def preload_documents():
+    print("📂 Pré-carregando documentos...")
+    for filename in os.listdir(INITIAL_DOCS_FOLDER):
+        if filename.lower().endswith(".pdf"):
+            file_path = os.path.join(INITIAL_DOCS_FOLDER, filename)
+            extracted_text = clean_text(extract_text_from_pdf(file_path))
+            if extracted_text.strip():
+                chunks = split_text(extracted_text)
+                doc_id = str(len(documents_db) + 1)
+                documents_db[doc_id] = {
+                    "id": doc_id,
+                    "title": filename,
+                    "content": extracted_text
+                }
+                vector_store.add_texts(
+                    texts=chunks,
+                    metadatas=[{"id": doc_id, "title": filename}] * len(chunks)
+                )
+                print(f"✅ Documento '{filename}' indexado.")
+            else:
+                print(f"⚠ Documento '{filename}' não contém texto legível.")
+    print("✅ Pré-carregamento concluído.")
+
+# Executa pré-carregamento na inicialização
+preload_documents()
 
 @router.post("/upload/", summary="Faz upload e indexa um PDF")
 async def upload_document(file: UploadFile = File(...)) -> Dict[str, Any]:
