@@ -1,34 +1,20 @@
-# Etapa 1: build das dependências
-FROM python:3.12-slim AS builder
+# Usa uma imagem base oficial do Python para aplicações leves
+FROM python:3.11-slim
 
+# Define o diretório de trabalho dentro do contêiner
 WORKDIR /app
 
-# Evita cache e define encoding padrão
-ENV PYTHONDONTWRITEBYTECODE=1 \
-    PYTHONUNBUFFERED=1
-
-# Instala dependências do sistema (se precisar)
-RUN apt-get update && apt-get install -y --no-install-recommends build-essential
-
-# Copia arquivos de dependências
+# Copia o arquivo de dependências para o contêiner
 COPY requirements.txt .
 
-# Instala dependências em /install
-RUN pip install --no-cache-dir --prefix=/install -r requirements.txt
+# Instala as dependências do Python
+RUN pip install --no-cache-dir -r requirements.txt
 
-# Etapa 2: imagem final
-FROM python:3.12-slim
-
-WORKDIR /app
-
-# Copia dependências já instaladas
-COPY --from=builder /install /usr/local
-
-# Copia código da aplicação
+# Copia o restante do código da aplicação para o contêiner
 COPY . .
 
-# Porta do uvicorn
+# Expõe a porta 8000, onde a aplicação FastAPI será executada
 EXPOSE 8000
 
-# Comando padrão de produção
+# Define o comando para iniciar a aplicação com Uvicorn
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
