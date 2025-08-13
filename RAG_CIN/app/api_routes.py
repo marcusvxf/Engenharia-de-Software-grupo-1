@@ -7,6 +7,7 @@ import os
 import unicodedata
 import fitz
 import re
+
 from dotenv import load_dotenv
 
 # LangChain e OpenAI
@@ -31,6 +32,7 @@ Path(VECTOR_STORE_DIR).mkdir(exist_ok=True)
 
 # Inicializa embeddings e vetor
 embedding_model = OpenAIEmbeddings(openai_api_key=OPENAI_API_KEY)
+
 vector_store = Chroma(
     embedding_function=embedding_model,
     persist_directory=VECTOR_STORE_DIR
@@ -167,7 +169,7 @@ async def upload_document(file: UploadFile = File(...)) -> Dict[str, Any]:
 async def search_documents(query: Query) -> Dict[str, Any]:
     if not query.text.strip():
         raise HTTPException(status_code=400, detail="A consulta está vazia.")
-
+    print(query.text)
     try:
         result = qa_chain(query.text)
         return {
@@ -182,4 +184,5 @@ async def search_documents(query: Query) -> Dict[str, Any]:
             ]
         }
     except Exception as e:
+        print(e)
         raise HTTPException(status_code=500, detail=f"Erro na geração de resposta: {str(e)}")
