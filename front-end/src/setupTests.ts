@@ -4,10 +4,10 @@ Object.defineProperty(global, 'import', {
   value: {
     meta: {
       env: {
-        VITE_SERVER_PATH: 'http://localhost:3000'
-      }
-    }
-  }
+        VITE_SERVER_PATH: 'http://localhost:6033',
+      },
+    },
+  },
 });
 
 const localStorageMock = {

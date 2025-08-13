@@ -3,7 +3,7 @@ services:
     image: marcusvxf/nginx:latest
     container_name: nginx
     volumes:
-      - ./nginx/html/dist:/etc/nginx/html
+      - ./front-end/dist:/etc/nginx/html
     ports:
       - '80:80'
       - '413:413'
