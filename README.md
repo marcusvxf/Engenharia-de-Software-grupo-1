@@ -1,13 +1,17 @@
 # 📚 Cinchat
 
 > Um assistente inteligente para universidades: centralize documentos institucionais, automatize respostas e reduza a sobrecarga administrativa.
+
 ---
+
 ## Criadores
+
 - Maria Clara
 - Matheus Pessoa
 - Igor Rego
 - Marcus Vinicius
 - Flávio Henrique
+
 ---
 
 ## 🧠 Contexto
@@ -18,7 +22,7 @@ Em instituições de ensino superior como o CIn/UFPE, a comunicação entre alun
 
 ## 🎯 Objetivo
 
-**CinChat** é uma plataforma que utiliza **IA generativa com RAG (Retrieval-Augmented Generation)** para fornecer uma interface de busca inteligente baseada nos documentos oficiais da instituição, além de ajuda na comunicação entre os membros da universidade.  
+**CinChat** é uma plataforma que utiliza **IA generativa com RAG (Retrieval-Augmented Generation)** para fornecer uma interface de busca inteligente baseada nos documentos oficiais da instituição, além de ajuda na comunicação entre os membros da universidade.
 
 Com ela, os usuários podem:
 
@@ -65,8 +69,20 @@ Alguns arquivos como [`CONTRIBUTING.md`](./CONTRIBUTING.md) e [`BUILD.md`](./BUI
 ---
 
 ## 📌 Roadmap (previsto)
- - Upload de documentos institucionais
- - Integração com SIGAA e Google Drive
- - Interface de busca com IA
- - Módulo de fluxo de assinatura de documentos
- - API pública para universidades
+
+- Upload de documentos institucionais
+- Integração com SIGAA e Google Drive
+- Interface de busca com IA
+- Módulo de fluxo de assinatura de documentos
+- API pública para universidades
+
+---
+
+## Aplicação já em deploy
+
+Caso queira usar a aplicação ela já foi levantada na seguinte url podendo testar o fluxo completo http://24.199.115.89
+
+No momento ele está limitado a perguntas sobre estagio como:
+
+"Quantas horas preciso para estagio"
+"A partir de qual periodo posso estagio em engenharia da computaçaõ"

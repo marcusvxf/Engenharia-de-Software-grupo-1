@@ -32,3 +32,12 @@ Ao abrir um PR deve informar o estado sem está pronto para ser revisado ou em e
 [READY] FEATURE: add new login button
 
 ---
+
+## Teste
+
+Caso queira usar a aplicação ela já foi levantada na seguinte url podendo testar o fluxo completo http://24.199.115.89
+
+No momento ele está limitado a perguntas sobre estagio como:
+
+"Quantas horas preciso para estagio"
+"A partir de qual periodo posso estagio em engenharia da computaçaõ"
