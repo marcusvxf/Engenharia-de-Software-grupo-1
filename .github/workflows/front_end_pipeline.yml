@@ -1,0 +1,130 @@
+name: Deploy web platform on production
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - front-end/**
+      - .github/workflows/front_end_pipeline.yml
+
+  workflow_dispatch:
+    inputs:
+      pass_sast:
+        type: boolean
+        default: false
+      pass_npm_audit:
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+  pull-requests: write
+  security-events: write
+env:
+  SSH_AUTH_SOCK: /tmp/ssh_agent.sock
+
+jobs:
+  npm-audit:
+    if: ${{ inputs.pass_npm_audit == false }}
+    name: Run npm audit
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: front-end
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: show files
+        run: ls
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run npm audit
+        run: npm audit --audit-level=high
+
+  sast:
+    if: ${{ inputs.pass_sast == false }}
+    name: Run sast analysis
+    uses: ./.github/workflows/sast.yml
+    permissions:
+      contents: write
+      issues: write
+      pull-requests: write
+      id-token: write
+      security-events: write
+    with:
+      path: front-end
+
+  #   run-tests:
+  #     name: Run tests
+  #     runs-on: ubuntu-latest
+  #     defaults:
+  #       run:
+  #         working-directory: front-end
+  #     steps:
+  #       - uses: actions/checkout@v2
+  #       - name: Install dependencies
+  #         run: npm install
+  #       - name: Run tests
+  #         env:
+  #           MIN_COVERAGE: 40
+  #         run: npm run test
+
+  build-web-and-deploy:
+    runs-on: ubuntu-24.04
+    environment: prod
+    needs: [npm-audit, sast]
+    defaults:
+      run:
+        working-directory: front-end
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ inputs.tag || vars.APP_VERSION_CODE }}
+
+      - name: Setup SSH with a passphrase
+        env:
+          SSH_PASSPHRASE: ${{ secrets.SSH_PASSPHRASE }}
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_KEY_FILE }}
+        run: |
+          ssh-agent -a $SSH_AUTH_SOCK > /dev/null
+          echo "echo $SSH_PASSPHRASE" > ~/.ssh_askpass && chmod +x ~/.ssh_askpass
+          echo "$SSH_PRIVATE_KEY" | tr -d '\r' | DISPLAY=None SSH_ASKPASS=~/.ssh_askpass ssh-add - >/dev/null
+
+      - name: Add remote host to known_hosts
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan -H ${{ secrets.DEPLOY_IP }} >> ~/.ssh/known_hosts
+
+      - name: show files
+        run: ls
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22.13.1
+
+      - name: install node modules
+        run: |
+          npm install
+
+      - name: Build vite app
+        env:
+          VITE_SERVER_PATH: http://24.199.115.89:413
+        run: |
+          npm run build
+
+      - name: Deploy to digital ocean
+        run: |
+          scp -r dist/ ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_IP }}:~/application/nginx/html/

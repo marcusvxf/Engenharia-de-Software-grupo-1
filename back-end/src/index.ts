@@ -12,12 +12,14 @@ import { authenticateMiddleware } from './middlewares/authenticate.middleware';
 
 const app = express();
 
-app.use(cors({
-  origin: '*', 
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-  credentials: false 
-}));
+app.use(
+  cors({
+    origin: '*',
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: false,
+  })
+);
 
 app.use(express.json());
 
@@ -25,6 +27,6 @@ app.use(express.json());
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 // Nossas rotas da API
 app.use('/users', userRoutes);
-app.use('/chats', authenticateMiddleware, chatRoutes);
-app.use('/messages', authenticateMiddleware, messageRoutes); // <-- Adicionei a rota que faltava
+app.use('/chats', chatRoutes);
+app.use('/messages', messageRoutes); // <-- Adicionei a rota que faltava
 export default app;
