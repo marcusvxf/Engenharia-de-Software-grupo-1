@@ -21,7 +21,7 @@ Path(UPLOAD_FOLDER).mkdir(exist_ok=True)
 Path(VECTOR_STORE_DIR).mkdir(exist_ok=True)
 
 # 🔹 Inicializa embeddings e repositório vetorial
-embedding_model = OllamaEmbeddings(model="deepseek-r1:1.5b",base_url="http://104.248.210.79:5005")  # Modelo de embeddings do Ollama
+embedding_model = OllamaEmbeddings(model="nomic-embed-text",base_url="http://104.248.210.79:5005")  # Modelo de embeddings do Ollama
 vector_store = Chroma(
     embedding_function=embedding_model,
     persist_directory=VECTOR_STORE_DIR
@@ -111,10 +111,10 @@ async def upload_document(file: UploadFile = File(...)) -> Dict[str, Any]:
 async def search_documents(query: Query) -> Dict[str, Any]:
     if not query.text.strip():
         raise HTTPException(status_code=400, detail="A consulta está vazia.")
-
+    print(query.text)
     try:
         result = qa_chain(query.text)
-
+        print(result)
         response = {
             "query": query.text,
             "answer": result["result"],
@@ -129,4 +129,5 @@ async def search_documents(query: Query) -> Dict[str, Any]:
         return response
 
     except Exception as e:
+        print(e)
         raise HTTPException(status_code=500, detail=f"Erro na geração de resposta: {str(e)}")
