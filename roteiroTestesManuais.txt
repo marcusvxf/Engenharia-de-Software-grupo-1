@@ -1,0 +1,52 @@
+Documentação de Testes Manuais
+1 - Criação de Chat
+História de Usuário
+ Como um usuário qualquer,
+ Quero criar um chat
+ Para que eu possa iniciar o processo de tirar uma dúvida.
+Cenário de Teste
+ Dado que o usuário esteja logado
+ E acesse a tela principal
+ Quando efetuar a criação de um novo chat
+ Então verá a tela de conversa com o chat selecionado.
+
+2 - Envio de Mensagem
+História de Usuário
+ Como um usuário qualquer,
+ Quero enviar uma mensagem
+ Para que eu possa esclarecer minha dúvida.
+Cenário de Teste
+ Dado que o usuário esteja logado
+ E tenha um chat aberto
+ Quando enviar uma mensagem
+ Então deverá receber a resposta com os dados referentes à dúvida.
+
+3 - Login
+História de Usuário
+ Como um usuário com conta criada,
+ Quero acessar a aplicação
+ Para que eu possa utilizar as ferramentas disponíveis.
+Cenário de Teste
+ Dado que o usuário exista
+ Quando inserir dados válidos
+ Então será redirecionado para a página inicial (home).
+
+4 - Adição de Novos Arquivos
+História de Usuário
+ Como um usuário administrador,
+ Quero adicionar novos arquivos para servir de conteúdo
+ Para que eu possa melhorar a qualidade das respostas dadas.
+
+5 - Repasse de Dúvidas
+História de Usuário
+ Como um usuário administrador,
+ Quero receber as dúvidas que não foram respondidas automaticamente
+ Para que eu possa fornecer uma resposta
+ E esta seja usada como base para futuras perguntas.
+Cenário de Teste
+ Dado que o usuário esteja no chat
+ Quando sua dúvida não for respondida pelo material disponível
+ Então a dúvida será redirecionada a um administrador
+ E a resposta será registrada como base para próximas consultas.
+
+
