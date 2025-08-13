@@ -32,7 +32,7 @@ jobs:
 
     defaults:
       run:
-        working-directory: back-end
+        working-directory: front-end
 
     steps:
       - name: Checkout code
@@ -63,11 +63,14 @@ jobs:
       id-token: write
       security-events: write
     with:
-      path: back-end
+      path: front-end
 
   run-tests:
     name: Run tests
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: front-end
     steps:
       - uses: actions/checkout@v2
       - name: Install dependencies
