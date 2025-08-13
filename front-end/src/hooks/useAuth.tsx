@@ -1,5 +1,10 @@
-
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  ReactNode,
+} from 'react';
 import { AuthState, LoginCredentials, RegisterCredentials } from '@/types/auth';
 import { toast } from '@/hooks/use-toast';
 
@@ -11,7 +16,7 @@ interface AuthContextType extends AuthState {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-const SERVER_PATH = import.meta.env.VITE_SERVER_PATH || 'http://localhost:3000';
+const SERVER_PATH = import.meta.env.VITE_SERVER_PATH || 'http://localhost:6033';
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [authState, setAuthState] = useState<AuthState>({
@@ -25,7 +30,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const token = localStorage.getItem('token');
     const userId = localStorage.getItem('userId');
     const userName = localStorage.getItem('name');
-    
+
     if (token && userId) {
       try {
         setAuthState({
@@ -43,7 +48,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   const login = async (credentials: LoginCredentials): Promise<boolean> => {
-
     try {
       const response = await fetch(`${SERVER_PATH}/users/login`, {
         method: 'POST',
@@ -56,7 +60,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       if (response.ok) {
         const data = await response.json();
         const { token, userId, name } = data;
-        
+
         localStorage.setItem('token', token);
         localStorage.setItem('userId', userId);
         localStorage.setItem('name', name);
@@ -67,57 +71,59 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           userName: name,
           isAuthenticated: true,
         });
-        
+
         toast({
-          title: "Login realizado com sucesso!",
-          description: "Bem-vindo ao CIn Chat.",
+          title: 'Login realizado com sucesso!',
+          description: 'Bem-vindo ao CIn Chat.',
         });
-        
+
         return true;
       } else {
         const errorData = await response.json();
         toast({
-          title: "Erro no login",
-          description: errorData.message || "Credenciais inválidas.",
-          variant: "destructive",
+          title: 'Erro no login',
+          description: errorData.message || 'Credenciais inválidas.',
+          variant: 'destructive',
         });
         return false;
       }
     } catch (error) {
       console.error('Login error:', error);
       toast({
-        title: "Erro de conexão",
-        description: "Não foi possível conectar ao servidor.",
-        variant: "destructive",
+        title: 'Erro de conexão',
+        description: 'Não foi possível conectar ao servidor.',
+        variant: 'destructive',
       });
       return false;
     }
   };
 
-  const register = async (credentials: RegisterCredentials): Promise<boolean> => {
+  const register = async (
+    credentials: RegisterCredentials
+  ): Promise<boolean> => {
     if (!credentials.email.endsWith('@cin.ufpe.br')) {
       toast({
-        title: "Email inválido",
-        description: "Use um email @cin.ufpe.br para se registrar.",
-        variant: "destructive",
+        title: 'Email inválido',
+        description: 'Use um email @cin.ufpe.br para se registrar.',
+        variant: 'destructive',
       });
       return false;
     }
 
     if (credentials.password !== credentials.confirmPassword) {
       toast({
-        title: "Senhas não coincidem",
-        description: "As senhas digitadas não são iguais.",
-        variant: "destructive",
+        title: 'Senhas não coincidem',
+        description: 'As senhas digitadas não são iguais.',
+        variant: 'destructive',
       });
       return false;
     }
 
     if (credentials.name.length < 8) {
       toast({
-        title: "Nome inválido",
-        description: "O nome deve ter pelo menos 8 caracteres.",
-        variant: "destructive",
+        title: 'Nome inválido',
+        description: 'O nome deve ter pelo menos 8 caracteres.',
+        variant: 'destructive',
       });
       return false;
     }
@@ -132,31 +138,31 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           name: credentials.name,
           email: credentials.email,
           password: credentials.password,
-          UserType: 'user'
+          UserType: 'user',
         }),
       });
 
       if (response.status === 201) {
         toast({
-          title: "Cadastro realizado!",
-          description: "Conta criada com sucesso. Faça login para continuar.",
+          title: 'Cadastro realizado!',
+          description: 'Conta criada com sucesso. Faça login para continuar.',
         });
         return true;
       } else {
         const errorData = await response.json();
         toast({
-          title: "Erro no cadastro",
-          description: errorData.message || "Erro ao criar conta.",
-          variant: "destructive",
+          title: 'Erro no cadastro',
+          description: errorData.message || 'Erro ao criar conta.',
+          variant: 'destructive',
         });
         return false;
       }
     } catch (error) {
       console.error('Register error:', error);
       toast({
-        title: "Erro de conexão",
-        description: "Não foi possível conectar ao servidor.",
-        variant: "destructive",
+        title: 'Erro de conexão',
+        description: 'Não foi possível conectar ao servidor.',
+        variant: 'destructive',
       });
       return false;
     }
@@ -172,8 +178,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       isAuthenticated: false,
     });
     toast({
-      title: "Logout realizado",
-      description: "Você foi desconectado com sucesso.",
+      title: 'Logout realizado',
+      description: 'Você foi desconectado com sucesso.',
     });
   };
 

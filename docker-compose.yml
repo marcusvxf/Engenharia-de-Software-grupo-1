@@ -2,18 +2,21 @@ services:
   nginx:
     image: marcusvxf/nginx:latest
     container_name: nginx
-
+    volumes:
+      - ./front-end/dist:/etc/nginx/html
     ports:
       - '80:80'
       - '413:413'
+      - '443:443'
+      - '6033:6033'
     networks:
       service-connection:
         aliases:
           - service-connection
 
   api-node:
-    image:
-    command: npm run start
+    image: marcusvxf/esg1-api:latest
+    command: bash -c "npx prisma migrate dev && npx prisma generate && npm run dev"
     container_name: api-node
     networks:
       service-connection:
@@ -27,6 +30,9 @@ services:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: ${POSTGRES_DB}
+      RAG_SERVICE_URL: http://rag:8000
+      PUBLIC_KEY: ${PUBLIC_KEY}
+      JWT_PUBLIC_SECRET: ${JWT_PUBLIC_SECRET}
       DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}?schema=public
 
   db:
@@ -46,6 +52,21 @@ services:
         aliases:
           - service-connection
 
+  rag:
+    image: marcusvxf/rag:latest
+    container_name: rag
+    networks:
+      service-connection:
+        aliases:
+          - service-connection
+    expose:
+      - 8000
+    environment:
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+
 networks:
   service-connection:
     driver: bridge
+
+volumes:
+  db-data:

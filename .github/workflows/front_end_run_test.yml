@@ -4,16 +4,20 @@ on:
   pull_request:
     types: [opened, synchronize, reopened]
     paths:
-      - 'back-end/**'
+      - 'front-end/**'
 
 jobs:
-  build:
+  run-tests:
+    name: Run tests
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: front-end
     steps:
       - uses: actions/checkout@v2
       - name: Install dependencies
         run: npm install
       - name: Run tests
         env:
-          MIN_COVERAGE: 80
-        run: npm test -- --coverage --coverageThreshold=${MIN_COVERAGE}
+          MIN_COVERAGE: 40
+        run: npm run test

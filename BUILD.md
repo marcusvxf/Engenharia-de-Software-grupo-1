@@ -13,14 +13,27 @@ Este documento descreve como configurar, construir e executar o projeto AcadIA l
 
 ---
 
+## Teste
+
+Caso queira usar a aplicação ela já foi levantada na seguinte url podendo testar o fluxo completo http://24.199.115.89
+
 ## 🚀 Subindo com Docker
 
 Este é o método recomendado.
 Você pode clonar e iniciar a aplicação da seguinte maneira
 
+É necessario o node >= 22 para configurar o front os demais funcionam a partir do docker.
+
+Também é preciso ter o docker configurado na maquina.
+
 ```bash
 git clone <link do repositorio>
 cd <nome do repositorio>
+
+cd front-end/
+npm i
+npm run build
+cd ..
 docker-compose up --build -d
 ```
 

@@ -5,15 +5,15 @@ on:
     branches:
       - main
     paths:
-      - back-end/**
-      - .github/workflows/back_end_pipeline.yml
+      - RAG_CIN/**
+      - .github/workflows/rag_pipeline.yml
 
   pull_request:
     types: [closed]
     branches:
       - main
     paths:
-      - back-end/**
+      - RAG_CIN/**
 
   workflow_dispatch:
     inputs:
@@ -30,33 +30,6 @@ permissions:
   security-events: write
 
 jobs:
-  npm-audit:
-    if: ${{ inputs.pass_npm_audit == false }}
-    name: Run npm audit
-    runs-on: ubuntu-latest
-
-    defaults:
-      run:
-        working-directory: back-end
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: show files
-        run: ls
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 22.13.1
-
-      - name: Install dependencies
-        run: npm install
-
-      - name: Run npm audit
-        run: npm audit --audit-level=high
-
   sast:
     if: ${{ inputs.pass_sast == false }}
     name: Run sast analysis
@@ -68,17 +41,17 @@ jobs:
       id-token: write
       security-events: write
     with:
-      path: back-end
+      path: RAG_CIN
 
   docker-build:
     name: Build and update docker image
-    needs: [npm-audit, sast]
+    needs: [sast]
     uses: ./.github/workflows/docker_build.yml
     with:
       version_code: latest
-      context: back-end
-      path: back-end/dockerfile
-      docker_image_name: esg1-api
+      context: RAG_CIN
+      path: RAG_CIN/dockerfile
+      docker_image_name: rag
     secrets:
       GH_TOKEN: ${{ secrets.GH_TOKEN }}
       DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
@@ -105,6 +78,6 @@ jobs:
           script: |
             cd application/
             docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
-            docker compose down api-node || true
-            docker pull ${{ secrets.DOCKER_USERNAME }}/esg1-api:latest
-            docker compose up -d api-node
+            docker compose down rag || true
+            docker pull ${{ secrets.DOCKER_USERNAME }}/rag:latest
+            docker compose up -d rag

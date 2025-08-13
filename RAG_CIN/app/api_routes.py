@@ -7,20 +7,24 @@ import os
 import unicodedata
 import fitz
 import re
+
 from dotenv import load_dotenv
 
 # LangChain e OpenAI
 from langchain_openai import OpenAIEmbeddings, ChatOpenAI
+
 from langchain_chroma import Chroma
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.chains import RetrievalQA
 from langchain.prompts import PromptTemplate
+
 
 # Configuração inicial
 load_dotenv()
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 if not OPENAI_API_KEY:
     raise RuntimeError("OPENAI_API_KEY não encontrado! Verifique seu .env.")
+
 
 UPLOAD_FOLDER = "documents"
 INITIAL_DOCS_FOLDER = "initial_docs"  # 🔹 Pasta para PDFs pré-carregados
@@ -29,15 +33,17 @@ Path(UPLOAD_FOLDER).mkdir(exist_ok=True)
 Path(INITIAL_DOCS_FOLDER).mkdir(exist_ok=True)
 Path(VECTOR_STORE_DIR).mkdir(exist_ok=True)
 
+
 # Inicializa embeddings e vetor
 embedding_model = OpenAIEmbeddings(openai_api_key=OPENAI_API_KEY)
+
 vector_store = Chroma(
     embedding_function=embedding_model,
     persist_directory=VECTOR_STORE_DIR
 )
 
-# LLM e prompt reforçado
 llm = ChatOpenAI(openai_api_key=OPENAI_API_KEY, temperature=0)  # 🔹 mais preciso
+
 
 template = """
 Você é um assistente virtual que responde a perguntas usando apenas o contexto fornecido.
@@ -55,6 +61,7 @@ Pergunta:
 Resposta em português:
 """
 PROMPT = PromptTemplate(template=template, input_variables=["context", "question"])
+
 
 qa_chain = RetrievalQA.from_chain_type(
     llm=llm,
@@ -93,7 +100,6 @@ def split_text(text: str, chunk_size=1000, chunk_overlap=200) -> list:
     )
     return splitter.split_text(text)
 
-# Banco de dados local
 documents_db = {}
 router = APIRouter()
 
@@ -167,7 +173,7 @@ async def upload_document(file: UploadFile = File(...)) -> Dict[str, Any]:
 async def search_documents(query: Query) -> Dict[str, Any]:
     if not query.text.strip():
         raise HTTPException(status_code=400, detail="A consulta está vazia.")
-
+    print(query.text)
     try:
         result = qa_chain(query.text)
         return {
@@ -182,4 +188,5 @@ async def search_documents(query: Query) -> Dict[str, Any]:
             ]
         }
     except Exception as e:
+        print(e)
         raise HTTPException(status_code=500, detail=f"Erro na geração de resposta: {str(e)}")
